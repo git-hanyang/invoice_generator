@@ -10,19 +10,35 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
     healthcheck:
-          test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
-          interval: 10s
-          timeout: 5s
-          retries: 5
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend/application
+    container_name: krs_backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/KRS
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8090:8090"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: krs_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
 volumes:
   mariadb_data:
-
-app:
-    build: .
-    networks:
-      - backend
-
-networks:
-  backend:
