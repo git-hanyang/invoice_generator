@@ -12,6 +12,7 @@ const DEFAULT_BUSINESS = {
 const cell = (extra = {}) => ({
   border: '1px solid #bbb',
   padding: '3px 5px',
+  verticalAlign: 'top',
   ...extra,
 })
 
@@ -40,6 +41,7 @@ export default function InvoiceTemplate({ invoice, business }) {
   const total = parseFloat(totalAmount) || 0
   const remaining = total - paidTotal
   const fmt = n => Number(n || 0).toFixed(2)
+  const fmtQty = n => { const v = Number(n || 0); return Number.isInteger(v) ? String(v) : v.toFixed(2) }
 
   return (
     <div style={{
@@ -101,7 +103,7 @@ export default function InvoiceTemplate({ invoice, business }) {
         padding: '5px 0',
         color: '#111',
       }}>
-        INVOICE &nbsp;/&nbsp; 發票
+        TAX INVOICE &nbsp;/&nbsp; 稅務發票
       </div>
 
       {/* ── Meta: Left = Car Plate + Phone, Right = Invoice No + Date ── */}
@@ -109,13 +111,12 @@ export default function InvoiceTemplate({ invoice, business }) {
         display: 'flex',
         justifyContent: 'space-between',
         borderTop: '1.5px solid #111',
-        borderBottom: '1.5px solid #111',
         padding: '5px 2px',
         marginBottom: '7px',
       }}>
         <div>
           <div style={{ marginBottom: '3px' }}>
-            <span style={{ fontWeight: '700' }}>Car Plate:&nbsp;</span>
+            <span style={{ fontWeight: '700' }}>Vehicle No.:&nbsp;</span>
             <span style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '1px' }}>{carPlate}</span>
           </div>
           <div>
@@ -123,7 +124,7 @@ export default function InvoiceTemplate({ invoice, business }) {
             <span>{phone}</span>
           </div>
         </div>
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right', minWidth: '160px' }}>
           <div style={{ marginBottom: '3px' }}>
             <span style={{ fontWeight: '700' }}>Invoice No.:&nbsp;</span>
             <span>{invoiceNumber}</span>
@@ -151,7 +152,7 @@ export default function InvoiceTemplate({ invoice, business }) {
             <tr key={i}>
               <td style={cell({ textAlign: 'center' })}>{i + 1}</td>
               <td style={cell({ wordBreak: 'break-word', whiteSpace: 'pre-wrap' })}>{item.description}</td>
-              <td style={cell({ textAlign: 'right' })}>{fmt(item.quantity)}</td>
+              <td style={cell({ textAlign: 'right' })}>{fmtQty(item.quantity)}</td>
               <td style={cell({ textAlign: 'right' })}>{fmt(item.unitPrice)}</td>
               <td style={cell({ textAlign: 'right' })}>{fmt(item.amount)}</td>
             </tr>
@@ -176,21 +177,27 @@ export default function InvoiceTemplate({ invoice, business }) {
           padding: '4px 7px',
           marginBottom: '6px',
           fontSize: '8px',
+          width: 'calc(100% - 168px)',
+          boxSizing: 'border-box',
         }}>
           <span style={{ fontWeight: '700' }}>Remarks:&nbsp;</span>
-          <span>{remark}</span>
+          <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{remark}</span>
         </div>
       )}
 
       {/* ── Totals ── */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-        <table style={{ fontSize: '8.5px', borderCollapse: 'collapse', minWidth: '190px' }}>
+        <table style={{ fontSize: '8.5px', borderCollapse: 'collapse', width: '168px', tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '102px' }} />
+            <col style={{ width: '66px' }} />
+          </colgroup>
           <tbody>
             <tr>
-              <td style={{ padding: '3px 8px', textAlign: 'right', fontWeight: '700', borderTop: '1.5px solid #111' }}>
+              <td style={{ padding: '3px 8px', textAlign: 'right', fontWeight: '700', border: 'none' }}>
                 Total:
               </td>
-              <td style={{ padding: '3px 8px', textAlign: 'right', fontWeight: '700', borderTop: '1.5px solid #111', minWidth: '80px' }}>
+              <td style={{ padding: '3px 8px', textAlign: 'right', fontWeight: '700', border: 'none' }}>
                 RM {fmt(totalAmount)}
               </td>
             </tr>
@@ -205,26 +212,29 @@ export default function InvoiceTemplate({ invoice, business }) {
               </tr>
             ))}
             {payments.length > 0 && (
-              <tr>
-                <td style={{
-                  padding: '3px 8px',
-                  textAlign: 'right',
-                  fontWeight: '700',
-                  borderTop: '1.5px solid #111',
-                  color: remaining <= 0 ? '#006600' : '#bb0000',
-                }}>
-                  Balance Due:
-                </td>
-                <td style={{
-                  padding: '3px 8px',
-                  textAlign: 'right',
-                  fontWeight: '700',
-                  borderTop: '1.5px solid #111',
-                  color: remaining <= 0 ? '#006600' : '#bb0000',
-                }}>
-                  RM {remaining.toFixed(2)}{remaining <= 0 ? ' ✓' : ''}
-                </td>
-              </tr>
+              <>
+                <tr>
+                  <td colSpan={2} style={{ padding: '0', lineHeight: '0', fontSize: '0', borderTop: '1.5px solid #111', borderBottom: 'none', borderLeft: 'none', borderRight: 'none' }} />
+                </tr>
+                <tr>
+                  <td style={{
+                    padding: '3px 8px',
+                    textAlign: 'right',
+                    fontWeight: '700',
+                    color: remaining <= 0 ? '#006600' : '#bb0000',
+                  }}>
+                    Balance Due:
+                  </td>
+                  <td style={{
+                    padding: '3px 8px',
+                    textAlign: 'right',
+                    fontWeight: '700',
+                    color: remaining <= 0 ? '#006600' : '#bb0000',
+                  }}>
+                    RM {remaining.toFixed(2)}{remaining <= 0 ? ' ✓' : ''}
+                  </td>
+                </tr>
+              </>
             )}
           </tbody>
         </table>
@@ -240,17 +250,17 @@ export default function InvoiceTemplate({ invoice, business }) {
         fontSize: '8px',
         color: '#555',
       }}>
-        <div>
-          <div style={{ marginBottom: '16px' }}>Customer Signature:</div>
-          <div style={{ borderBottom: '1px solid #aaa', width: '100px' }} />
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '33px' }}>Customer Signature:</div>
+          <div style={{ borderBottom: '1px solid #aaa', width: '100px', margin: '0 auto' }} />
         </div>
         <div style={{ textAlign: 'center', color: '#777' }}>
           <div>Thank you for your business!</div>
           <div style={{ marginTop: '2px' }}>歡迎再次光臨</div>
         </div>
-        <div>
-          <div style={{ marginBottom: '16px' }}>Authorised By:</div>
-          <div style={{ borderBottom: '1px solid #aaa', width: '100px' }} />
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '33px' }}>Authorised By:</div>
+          <div style={{ borderBottom: '1px solid #aaa', width: '100px', margin: '0 auto' }} />
         </div>
       </div>
     </div>

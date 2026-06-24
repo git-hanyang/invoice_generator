@@ -17,6 +17,7 @@ function calcAmount(qty, price) {
 export default function InvoiceForm({ initialData, onSaved, business }) {
   const today = new Date().toISOString().split('T')[0]
   const previewRef = useRef(null)
+  const pdfRef = useRef(null)
 
   // Auto-fill next invoice number for new invoices
   useEffect(() => {
@@ -136,8 +137,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   }
 
   async function buildPdf() {
-    if (!previewRef.current) throw new Error('Preview not mounted')
-    return generateInvoicePdf(previewRef.current)
+    if (!pdfRef.current) throw new Error('Preview not mounted')
+    return generateInvoicePdf(pdfRef.current)
   }
 
   async function handleDownloadPdf() {
@@ -200,7 +201,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   return (
     <div className="max-w-[1664px] mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Invoice' : 'New Invoice'}</h2>
+        <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Tax Invoice' : 'New Tax Invoice'}</h2>
         {!initialData && (
           <button
             onClick={() => {
@@ -261,7 +262,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Car Plate</label>
+              <label className="block text-sm font-medium mb-1">Vehicle No.</label>
               <CustomerAutocomplete
                 value={carPlate}
                 phone={phone}
@@ -409,19 +410,19 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
         </div>
 
         {/* ── Right column: live invoice preview ── */}
-        <div className="flex-shrink-0 w-[640px]">
+        <div className="flex-shrink-0 w-[660px]">
           <div className="sticky top-4">
             <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Live Preview</p>
-            <div style={{ transform: 'scale(1.15)', transformOrigin: 'top left' }}>
+            <div style={{ transform: 'scale(1.15)', transformOrigin: 'top left', marginBottom: '100px', marginRight: '90px' }}>
               <div
-                ref={previewRef}
                 style={{
                   boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
-                  background: '#fff',
                   display: 'inline-block',
                 }}
               >
-                <InvoiceTemplate invoice={invoiceData()} business={business} />
+                <div ref={pdfRef} style={{ background: '#fff' }}>
+                  <InvoiceTemplate invoice={invoiceData()} business={business} />
+                </div>
               </div>
             </div>
           </div>
