@@ -53,6 +53,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   const [saving, setSaving] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [msg, setMsg] = useState('')
+  const [savedOk, setSavedOk] = useState(!!initialData)
 
   const total = items.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
   const paidTotal = payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0)
@@ -157,6 +158,25 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     }
   }
 
+  async function handlePrint() {
+    setGenerating(true)
+    setMsg('')
+    try {
+      const pdf = await buildPdf()
+      const byteString = atob(pdf.split(',')[1])
+      const ab = new ArrayBuffer(byteString.length)
+      const ia = new Uint8Array(ab)
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
+      const blob = new Blob([ab], { type: 'application/pdf' })
+      const blobUrl = URL.createObjectURL(blob)
+      window.open(blobUrl, '_blank')
+    } catch {
+      setMsg('PDF generation failed.')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   async function handleSave() {
     if (!invoiceNumber.trim()) { setMsg('Invoice number required.'); return }
     if (!carPlate.trim()) { setMsg('Car plate required.'); return }
@@ -189,6 +209,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       }
       await api.post('/invoices', payload)
       setMsg('Invoice saved successfully.')
+      setSavedOk(true)
       if (onSaved) onSaved()
     } catch (err) {
       setMsg(err.response?.data?.message || 'Save failed.')
@@ -400,6 +421,13 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition disabled:opacity-50"
             >
               {saving ? 'Saving...' : 'Save Invoice'}
+            </button>
+            <button
+              onClick={handlePrint}
+              disabled={!savedOk || generating}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+            >
+              Print
             </button>
             {msg && (
               <span className={`text-sm ${msg.includes('success') ? 'text-green-600' : 'text-red-500'}`}>
