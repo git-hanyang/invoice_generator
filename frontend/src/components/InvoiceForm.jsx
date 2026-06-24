@@ -197,8 +197,32 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Invoice' : 'New Invoice'}</h2>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex items-center gap-3">
+        <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Invoice' : 'New Invoice'}</h2>
+        {!initialData && (
+          <button
+            onClick={() => {
+              api.get('/invoices/next-number').then(r => setInvoiceNumber(r.data.invoiceNumber)).catch(() => {})
+              setInvoiceDate(today)
+              setCarPlate('')
+              setCustomerId(null)
+              setPhone('')
+              setRemark('')
+              setItems([emptyItem()])
+              setPayments([])
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 border border-blue-200 hover:bg-blue-50 transition"
+            title="Clear form for new invoice"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            New
+          </button>
+        )}
+      </div>
 
       <div className="flex gap-6">
         {/* ── Left column: form fields ── */}
@@ -215,7 +239,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                   value={invoiceNumber}
                   onChange={e => setInvoiceNumber(e.target.value)}
                 />
-                {invoiceNumber && (
+                {initialData && invoiceNumber && (
                   <button
                     onClick={handleDeleteInvoiceNumber}
                     className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm transition"
@@ -258,6 +282,14 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
           {/* Line items */}
           <div className="bg-white rounded-xl shadow p-5">
             <h3 className="font-semibold mb-3 text-gray-700">Work Done</h3>
+            <div className="flex gap-2 items-center text-xs text-gray-400 mb-1 px-1">
+                <span className="w-5"></span>
+                <span className="flex-1 min-w-0">Description</span>
+                <span className="w-10 text-right">Qty</span>
+                <span className="w-20 text-right">Unit (RM)</span>
+                <span className="w-20 text-right">Amount (RM)</span>
+                <span className="w-6"></span>
+              </div>
             <div className="space-y-2">
               {items.map((item, idx) => (
                 <div key={idx} className="flex gap-2 items-center">
@@ -268,22 +300,22 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                     onSelect={wi => handleSelectWorkItem(idx, wi)}
                   />
                   <input
-                    className="border rounded-lg px-2 py-2 text-sm w-16 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border rounded-lg px-2 py-2 text-sm w-10 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="Qty"
                     value={item.quantity}
                     onChange={e => updateItem(idx, 'quantity', e.target.value)}
                     type="number" min="0" step="0.01"
                   />
                   <input
-                    className="border rounded-lg px-2 py-2 text-sm w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    placeholder="Unit Price"
+                    className="border rounded-lg px-2 py-2 text-sm w-20 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="0.00"
                     value={item.unitPrice}
                     onChange={e => updateItem(idx, 'unitPrice', e.target.value)}
                     type="number" min="0" step="0.01"
                   />
                   <input
-                    className="border rounded-lg px-2 py-2 text-sm w-24 text-right bg-gray-50"
-                    placeholder="Amount"
+                    className="border rounded-lg px-2 py-2 text-sm w-20 text-right bg-gray-50"
+                    placeholder="0.00"
                     value={item.amount}
                     readOnly
                   />
