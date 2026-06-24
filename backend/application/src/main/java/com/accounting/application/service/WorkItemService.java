@@ -5,6 +5,7 @@ import com.accounting.application.entity.WorkItem;
 import com.accounting.application.repository.WorkItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,6 +36,16 @@ public class WorkItemService {
         item.setDescription(dto.getDescription());
         item.setUnitPrice(dto.getUnitPrice() != null ? dto.getUnitPrice() : BigDecimal.ZERO);
         return toDto(repo.save(item));
+    }
+
+    @Transactional
+    public void upsertByDescription(String description, BigDecimal unitPrice) {
+        if (description == null || description.isBlank()) return;
+        WorkItem item = repo.findFirstByDescriptionIgnoreCase(description.trim())
+                .orElse(new WorkItem());
+        item.setDescription(description.trim());
+        item.setUnitPrice(unitPrice != null ? unitPrice : BigDecimal.ZERO);
+        repo.save(item);
     }
 
     public void delete(Long id) {

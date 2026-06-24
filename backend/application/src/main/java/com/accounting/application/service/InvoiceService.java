@@ -19,6 +19,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepo;
     private final CustomerRepository customerRepo;
     private final CustomerService customerService;
+    private final WorkItemService workItemService;
 
     @Transactional
     public InvoiceDto save(SaveInvoiceRequest req) {
@@ -54,6 +55,7 @@ public class InvoiceService {
                         .sortOrder(i)
                         .build();
                 invoice.getItems().add(item);
+                workItemService.upsertByDescription(d.getDescription(), d.getUnitPrice());
             }
         }
 
