@@ -2,6 +2,7 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
 export async function generateInvoicePdf(element) {
+  await document.fonts.ready
   const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true,

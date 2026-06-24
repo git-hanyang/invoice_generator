@@ -4,7 +4,7 @@ import api from '../api/axios'
 import InvoiceForm from '../components/InvoiceForm'
 import InvoiceHistory from '../components/InvoiceHistory'
 
-const TABS = ['New Invoice', 'Invoice History']
+const TABS = ['New Tax Invoice', 'Tax Invoice History']
 
 export default function Dashboard() {
   const [tab, setTab] = useState(0)

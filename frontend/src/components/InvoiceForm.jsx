@@ -17,6 +17,7 @@ function calcAmount(qty, price) {
 export default function InvoiceForm({ initialData, onSaved, business }) {
   const today = new Date().toISOString().split('T')[0]
   const previewRef = useRef(null)
+  const pdfRef = useRef(null)
 
   // Auto-fill next invoice number for new invoices
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   const [saving, setSaving] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [msg, setMsg] = useState('')
+  const [savedOk, setSavedOk] = useState(!!initialData)
 
   const total = items.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
   const paidTotal = payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0)
@@ -136,8 +138,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   }
 
   async function buildPdf() {
-    if (!previewRef.current) throw new Error('Preview not mounted')
-    return generateInvoicePdf(previewRef.current)
+    if (!pdfRef.current) throw new Error('Preview not mounted')
+    return generateInvoicePdf(pdfRef.current)
   }
 
   async function handleDownloadPdf() {
@@ -145,9 +147,29 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     setMsg('')
     try {
       const pdf = await buildPdf()
-      // Open PDF in new tab
-      const win = window.open()
-      win.document.write(`<iframe src="${pdf}" style="width:100%;height:100%;border:none" />`)
+      const link = document.createElement('a')
+      link.href = pdf
+      link.download = `invoice-${invoiceNumber || 'draft'}.pdf`
+      link.click()
+    } catch {
+      setMsg('PDF generation failed.')
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  async function handlePrint() {
+    setGenerating(true)
+    setMsg('')
+    try {
+      const pdf = await buildPdf()
+      const byteString = atob(pdf.split(',')[1])
+      const ab = new ArrayBuffer(byteString.length)
+      const ia = new Uint8Array(ab)
+      for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
+      const blob = new Blob([ab], { type: 'application/pdf' })
+      const blobUrl = URL.createObjectURL(blob)
+      window.open(blobUrl, '_blank')
     } catch {
       setMsg('PDF generation failed.')
     } finally {
@@ -187,6 +209,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       }
       await api.post('/invoices', payload)
       setMsg('Invoice saved successfully.')
+      setSavedOk(true)
       if (onSaved) onSaved()
     } catch (err) {
       setMsg(err.response?.data?.message || 'Save failed.')
@@ -197,9 +220,9 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-[1664px] mx-auto space-y-6">
       <div className="flex items-center gap-3">
-        <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Invoice' : 'New Invoice'}</h2>
+        <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Tax Invoice' : 'New Tax Invoice'}</h2>
         {!initialData && (
           <button
             onClick={() => {
@@ -260,7 +283,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Car Plate</label>
+              <label className="block text-sm font-medium mb-1">Vehicle No.</label>
               <CustomerAutocomplete
                 value={carPlate}
                 phone={phone}
@@ -285,7 +308,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
             <div className="flex gap-2 items-center text-xs text-gray-400 mb-1 px-1">
                 <span className="w-5"></span>
                 <span className="flex-1 min-w-0">Description</span>
-                <span className="w-10 text-right">Qty</span>
+                <span className="w-14 text-right">Qty</span>
                 <span className="w-20 text-right">Unit (RM)</span>
                 <span className="w-20 text-right">Amount (RM)</span>
                 <span className="w-6"></span>
@@ -300,18 +323,18 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                     onSelect={wi => handleSelectWorkItem(idx, wi)}
                   />
                   <input
-                    className="border rounded-lg px-2 py-2 text-sm w-10 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border rounded-lg px-2 py-2 text-sm w-14 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="Qty"
                     value={item.quantity}
                     onChange={e => updateItem(idx, 'quantity', e.target.value)}
-                    type="number" min="0" step="0.01"
+                    type="number" min="0"
                   />
                   <input
                     className="border rounded-lg px-2 py-2 text-sm w-20 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="0.00"
                     value={item.unitPrice}
                     onChange={e => updateItem(idx, 'unitPrice', e.target.value)}
-                    type="number" min="0" step="0.01"
+                    type="number" min="0"
                   />
                   <input
                     className="border rounded-lg px-2 py-2 text-sm w-20 text-right bg-gray-50"
@@ -399,6 +422,13 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
             >
               {saving ? 'Saving...' : 'Save Invoice'}
             </button>
+            <button
+              onClick={handlePrint}
+              disabled={!savedOk || generating}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+            >
+              Print
+            </button>
             {msg && (
               <span className={`text-sm ${msg.includes('success') ? 'text-green-600' : 'text-red-500'}`}>
                 {msg}
@@ -408,18 +438,20 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
         </div>
 
         {/* ── Right column: live invoice preview ── */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-[660px]">
           <div className="sticky top-4">
             <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Live Preview</p>
-            <div
-              ref={previewRef}
-              style={{
-                boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
-                background: '#fff',
-                display: 'inline-block',
-              }}
-            >
-              <InvoiceTemplate invoice={invoiceData()} business={business} />
+            <div style={{ transform: 'scale(1.15)', transformOrigin: 'top left', marginBottom: '100px', marginRight: '90px' }}>
+              <div
+                style={{
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
+                  display: 'inline-block',
+                }}
+              >
+                <div ref={pdfRef} style={{ background: '#fff' }}>
+                  <InvoiceTemplate invoice={invoiceData()} business={business} />
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,15 +1,28 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import api from '../api/axios'
 import InvoiceForm from './InvoiceForm'
+import InvoiceTemplate from './InvoiceTemplate'
+import { generateInvoicePdf } from '../utils/pdfGenerator'
 
-function dataUriToBlobUrl(dataUri) {
-  const parts = dataUri.split(',')
-  const byteString = atob(parts[1])
-  const ab = new ArrayBuffer(byteString.length)
-  const ia = new Uint8Array(ab)
-  for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
-  const blob = new Blob([ab], { type: 'application/pdf' })
-  return URL.createObjectURL(blob)
+function toTemplateFormat(data) {
+  return {
+    invoiceNumber: data.invoiceNumber,
+    invoiceDate: data.invoiceDate,
+    carPlate: data.customer?.carPlate || '',
+    phone: data.customer?.phone || '',
+    remark: data.remark || '',
+    items: (data.items || []).map(i => ({
+      description: i.description,
+      quantity: parseFloat(i.quantity),
+      unitPrice: parseFloat(i.unitPrice),
+      amount: parseFloat(i.amount),
+    })),
+    totalAmount: parseFloat(data.totalAmount) || 0,
+    payments: (data.payments || []).map(p => ({
+      amount: parseFloat(p.amount),
+      paymentDate: p.paymentDate,
+    })),
+  }
 }
 
 function sortByInvoiceNumberDesc(invoices) {
@@ -25,20 +38,45 @@ export default function InvoiceHistory({ business }) {
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState(null)
-  const [pdfBlobUrl, setPdfBlobUrl] = useState(null)
+  const [selectedFullData, setSelectedFullData] = useState(null)
   const [editing, setEditing] = useState(false)
   const [editData, setEditData] = useState(null)
-  const blobUrlRef = useRef(null)
+  const [generating, setGenerating] = useState(false)
+  const previewRef = useRef(null)
 
-  function revokePdf() {
-    if (blobUrlRef.current) {
-      URL.revokeObjectURL(blobUrlRef.current)
-      blobUrlRef.current = null
+  async function handleDownload() {
+    if (!previewRef.current) return
+    setGenerating(true)
+    try {
+      const pdf = await generateInvoicePdf(previewRef.current)
+      const link = document.createElement('a')
+      link.href = pdf
+      link.download = `invoice-${selected?.invoiceNumber || 'draft'}.pdf`
+      link.click()
+    } finally {
+      setGenerating(false)
     }
-    setPdfBlobUrl(null)
   }
 
-  useEffect(() => () => revokePdf(), [])
+  async function handlePrint() {
+    if (!previewRef.current) return
+    setGenerating(true)
+    const win = window.open('', '_blank')
+    try {
+      const dataUri = await generateInvoicePdf(previewRef.current)
+      const parts = dataUri.split(',')
+      const bytes = atob(parts[1])
+      const ab = new ArrayBuffer(bytes.length)
+      const ia = new Uint8Array(ab)
+      for (let i = 0; i < bytes.length; i++) ia[i] = bytes.charCodeAt(i)
+      const blob = new Blob([ab], { type: 'application/pdf' })
+      win.location.href = URL.createObjectURL(blob)
+    } catch {
+      win.close()
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   const search = useCallback(async (q) => {
     setLoading(true)
@@ -60,25 +98,21 @@ export default function InvoiceHistory({ business }) {
   }
 
   async function handleSelect(inv) {
-    revokePdf()
     setEditing(false)
     setEditData(null)
     setSelected(inv)
+    setSelectedFullData(null)
     try {
       const { data } = await api.get(`/invoices/${inv.id}`)
-      if (data.pdfBase64) {
-        const url = dataUriToBlobUrl(data.pdfBase64)
-        blobUrlRef.current = url
-        setPdfBlobUrl(url)
-      }
+      setSelectedFullData(data)
     } catch {
-      // no pdf
+      // no data
     }
   }
 
   async function handleEdit(inv) {
-    revokePdf()
     setSelected(null)
+    setSelectedFullData(null)
     try {
       const { data } = await api.get(`/invoices/${inv.id}`)
       setEditData(data)
@@ -92,7 +126,7 @@ export default function InvoiceHistory({ business }) {
     if (!window.confirm(`Delete invoice ${inv.invoiceNumber}? This cannot be undone.`)) return
     try {
       await api.delete(`/invoices/number/${encodeURIComponent(inv.invoiceNumber)}`)
-      if (selected?.id === inv.id) { setSelected(null); revokePdf() }
+      if (selected?.id === inv.id) { setSelected(null); setSelectedFullData(null) }
       search(query)
     } catch {
       alert('Failed to delete invoice.')
@@ -121,12 +155,12 @@ export default function InvoiceHistory({ business }) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
-      <h2 className="text-xl font-bold text-gray-800">Invoice History</h2>
+      <h2 className="text-xl font-bold text-gray-800">Tax Invoice History</h2>
 
       <form onSubmit={handleSearch} className="flex gap-3">
         <input
           className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Search by car plate or phone number..."
+          placeholder="Search by vehicle no. or phone number..."
           value={query}
           onChange={e => setQuery(e.target.value)}
         />
@@ -158,7 +192,7 @@ export default function InvoiceHistory({ business }) {
               <tr>
                 <th className="px-4 py-3 text-left">Invoice No</th>
                 <th className="px-4 py-3 text-left">Date</th>
-                <th className="px-4 py-3 text-left">Car Plate</th>
+                <th className="px-4 py-3 text-left">Vehicle No.</th>
                 <th className="px-4 py-3 text-left">Phone</th>
                 <th className="px-4 py-3 text-right">Total (RM)</th>
                 <th className="px-4 py-3 text-center">Actions</th>
@@ -219,24 +253,41 @@ export default function InvoiceHistory({ business }) {
         <div className="bg-white rounded-xl shadow p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-700">
-              Invoice: {selected.invoiceNumber}
+              Tax Invoice: {selected.invoiceNumber}
             </h3>
-            <button
-              onClick={() => { setSelected(null); revokePdf() }}
-              className="text-gray-400 hover:text-gray-600 text-xl leading-none"
-            >
-              ×
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleDownload}
+                disabled={generating || !selectedFullData}
+                className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition disabled:opacity-50"
+              >
+                {generating ? 'Generating...' : 'Download PDF'}
+              </button>
+              <button
+                onClick={handlePrint}
+                disabled={generating || !selectedFullData}
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
+              >
+                Print
+              </button>
+              <button
+                onClick={() => { setSelected(null); setSelectedFullData(null) }}
+                className="text-gray-400 hover:text-gray-600 text-xl leading-none ml-1"
+              >
+                ×
+              </button>
+            </div>
           </div>
-          {pdfBlobUrl ? (
-            <iframe
-              src={pdfBlobUrl}
-              className="w-full border rounded"
-              style={{ height: '600px' }}
-              title="Invoice PDF"
-            />
+          {selectedFullData ? (
+            <div style={{ transform: 'scale(1.15)', transformOrigin: 'top left', marginBottom: '100px', marginRight: '90px' }}>
+              <div style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.12)', display: 'inline-block' }}>
+                <div ref={previewRef} style={{ background: '#fff' }}>
+                  <InvoiceTemplate invoice={toTemplateFormat(selectedFullData)} business={business} />
+                </div>
+              </div>
+            </div>
           ) : (
-            <p className="text-gray-400 text-sm">No PDF stored for this invoice.</p>
+            <p className="text-gray-400 text-sm">Loading...</p>
           )}
         </div>
       )}
