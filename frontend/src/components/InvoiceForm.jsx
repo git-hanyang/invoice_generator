@@ -198,7 +198,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-[1664px] mx-auto space-y-6">
       <div className="flex items-center gap-3">
         <h2 className="text-xl font-bold text-gray-800">{initialData ? 'Edit Invoice' : 'New Invoice'}</h2>
         {!initialData && (
@@ -286,7 +286,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
             <div className="flex gap-2 items-center text-xs text-gray-400 mb-1 px-1">
                 <span className="w-5"></span>
                 <span className="flex-1 min-w-0">Description</span>
-                <span className="w-10 text-right">Qty</span>
+                <span className="w-14 text-right">Qty</span>
                 <span className="w-20 text-right">Unit (RM)</span>
                 <span className="w-20 text-right">Amount (RM)</span>
                 <span className="w-6"></span>
@@ -301,18 +301,18 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                     onSelect={wi => handleSelectWorkItem(idx, wi)}
                   />
                   <input
-                    className="border rounded-lg px-2 py-2 text-sm w-10 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="border rounded-lg px-2 py-2 text-sm w-14 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="Qty"
                     value={item.quantity}
                     onChange={e => updateItem(idx, 'quantity', e.target.value)}
-                    type="number" min="0" step="0.01"
+                    type="number" min="0"
                   />
                   <input
                     className="border rounded-lg px-2 py-2 text-sm w-20 text-right focus:outline-none focus:ring-2 focus:ring-blue-400"
                     placeholder="0.00"
                     value={item.unitPrice}
                     onChange={e => updateItem(idx, 'unitPrice', e.target.value)}
-                    type="number" min="0" step="0.01"
+                    type="number" min="0"
                   />
                   <input
                     className="border rounded-lg px-2 py-2 text-sm w-20 text-right bg-gray-50"
@@ -409,18 +409,20 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
         </div>
 
         {/* ── Right column: live invoice preview ── */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 w-[640px]">
           <div className="sticky top-4">
             <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">Live Preview</p>
-            <div
-              ref={previewRef}
-              style={{
-                boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
-                background: '#fff',
-                display: 'inline-block',
-              }}
-            >
-              <InvoiceTemplate invoice={invoiceData()} business={business} />
+            <div style={{ transform: 'scale(1.15)', transformOrigin: 'top left' }}>
+              <div
+                ref={previewRef}
+                style={{
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
+                  background: '#fff',
+                  display: 'inline-block',
+                }}
+              >
+                <InvoiceTemplate invoice={invoiceData()} business={business} />
+              </div>
             </div>
           </div>
         </div>
