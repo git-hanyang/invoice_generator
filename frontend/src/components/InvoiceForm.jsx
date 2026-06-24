@@ -145,9 +145,10 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     setMsg('')
     try {
       const pdf = await buildPdf()
-      // Open PDF in new tab
-      const win = window.open()
-      win.document.write(`<iframe src="${pdf}" style="width:100%;height:100%;border:none" />`)
+      const link = document.createElement('a')
+      link.href = pdf
+      link.download = `invoice-${invoiceNumber || 'draft'}.pdf`
+      link.click()
     } catch {
       setMsg('PDF generation failed.')
     } finally {
