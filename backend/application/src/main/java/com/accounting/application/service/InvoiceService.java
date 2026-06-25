@@ -23,8 +23,17 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceDto save(SaveInvoiceRequest req) {
-        CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone());
-        Customer customer = customerRepo.findById(customerDto.getId()).orElseThrow();
+        Customer customer;
+        if (req.getCustomerId() != null) {
+            customer = customerRepo.findById(req.getCustomerId()).orElseThrow();
+            if (req.getPhone() != null && !req.getPhone().isBlank()) {
+                customer.setPhone(req.getPhone());
+            }
+            customer = customerRepo.save(customer);
+        } else {
+            CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone());
+            customer = customerRepo.findById(customerDto.getId()).orElseThrow();
+        }
 
         Invoice invoice = invoiceRepo.findByInvoiceNumberAndDeletedAtIsNull(req.getInvoiceNumber())
                 .orElse(Invoice.builder().build());

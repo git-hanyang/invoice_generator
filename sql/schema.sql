@@ -34,8 +34,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS customers (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    car_plate VARCHAR(50) NOT NULL UNIQUE,
-    phone VARCHAR(30)
+    car_plate VARCHAR(50) NOT NULL,
+    phone VARCHAR(30),
+    UNIQUE KEY uq_car_plate_phone (car_plate, phone)
 );
 
 CREATE TABLE IF NOT EXISTS work_items (
@@ -48,14 +49,15 @@ CREATE TABLE IF NOT EXISTS work_items (
 
 CREATE TABLE IF NOT EXISTS invoices (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    invoice_number VARCHAR(100) NOT NULL UNIQUE,
+    invoice_number VARCHAR(100) NOT NULL,
     customer_id BIGINT NOT NULL,
     invoice_date DATE NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     pdf_data LONGBLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(id)
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    INDEX idx_invoice_number (invoice_number)
 );
 
 CREATE TABLE IF NOT EXISTS invoice_payments (
