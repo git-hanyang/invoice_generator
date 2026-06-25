@@ -25,11 +25,21 @@ public class InvoiceService {
     public InvoiceDto save(SaveInvoiceRequest req) {
         Customer customer;
         if (req.getCustomerId() != null) {
-            customer = customerRepo.findById(req.getCustomerId()).orElseThrow();
-            if (req.getPhone() != null && !req.getPhone().isBlank()) {
-                customer.setPhone(req.getPhone());
+            String newPhone = (req.getPhone() != null && !req.getPhone().isBlank()) ? req.getPhone() : null;
+            var existing = customerRepo.findByCarPlateIgnoreCaseAndPhone(req.getCarPlate(), newPhone);
+            if (existing.isPresent() && !existing.get().getId().equals(req.getCustomerId())) {
+                // new (carPlate, phone) already exists as different row — reassign to it
+                Long oldId = req.getCustomerId();
+                customer = existing.get();
+                // delete old customer if only this invoice references it
+                if (invoiceRepo.countByCustomer_Id(oldId) <= 1) {
+                    customerRepo.deleteById(oldId);
+                }
+            } else {
+                customer = customerRepo.findById(req.getCustomerId()).orElseThrow();
+                customer.setPhone(newPhone);
+                customer = customerRepo.save(customer);
             }
-            customer = customerRepo.save(customer);
         } else {
             CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone());
             customer = customerRepo.findById(customerDto.getId()).orElseThrow();
