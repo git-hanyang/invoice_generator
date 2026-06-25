@@ -28,4 +28,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("SELECT i.invoiceNumber FROM Invoice i WHERE i.deletedAt IS NULL AND i.invoiceNumber IS NOT NULL")
     List<String> findAllActiveInvoiceNumbers();
+
+    long countByCustomer_Id(Long customerId);
 }
