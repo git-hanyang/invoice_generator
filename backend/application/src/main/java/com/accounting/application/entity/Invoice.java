@@ -23,7 +23,7 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "invoice_number", nullable = false, unique = true, length = 100)
+    @Column(name = "invoice_number", nullable = false, length = 100)
     private String invoiceNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)

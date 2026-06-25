@@ -21,14 +21,8 @@ public class CustomerService {
     }
 
     public CustomerDto findOrCreate(String carPlate, String phone) {
-        return repo.findByCarPlateIgnoreCase(carPlate)
-                .map(c -> {
-                    if (phone != null && !phone.isBlank() && !phone.equals(c.getPhone())) {
-                        c.setPhone(phone);
-                        repo.save(c);
-                    }
-                    return toDto(c);
-                })
+        return repo.findByCarPlateIgnoreCaseAndPhone(carPlate, phone)
+                .map(this::toDto)
                 .orElseGet(() -> {
                     Customer c = Customer.builder().carPlate(carPlate.toUpperCase()).phone(phone).build();
                     return toDto(repo.save(c));
