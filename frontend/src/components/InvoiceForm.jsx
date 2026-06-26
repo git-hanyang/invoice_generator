@@ -80,10 +80,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     setItems(prev => {
       const next = [...prev]
       next[idx] = {
+        ...next[idx],
         description: item.description,
-        quantity: '1',
-        unitPrice: String(item.unitPrice),
-        amount: String(item.unitPrice),
       }
       return next
     })
