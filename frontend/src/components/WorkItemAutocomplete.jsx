@@ -50,10 +50,9 @@ export default function WorkItemAutocomplete({ value, onChange, onSelect }) {
             <li
               key={item.id}
               onMouseDown={() => select(item)}
-              className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex justify-between"
+              className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm"
             >
               <span>{item.description}</span>
-              <span className="text-gray-400 ml-2">RM {Number(item.unitPrice).toFixed(2)}</span>
             </li>
           ))}
         </ul>
