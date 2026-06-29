@@ -42,9 +42,6 @@ public class Invoice {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Column(name = "pdf_data", columnDefinition = "LONGBLOB")
-    private byte[] pdfData;
-
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
