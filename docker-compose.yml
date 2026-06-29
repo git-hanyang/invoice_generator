@@ -6,6 +6,7 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: KRS
+      TZ: Asia/Kuala_Lumpur
     ports:
       - "3308:3306"
     volumes:
@@ -25,6 +26,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/KRS
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      TZ: Asia/Kuala_Lumpur
     ports:
       - "8090:8090"
     depends_on:
