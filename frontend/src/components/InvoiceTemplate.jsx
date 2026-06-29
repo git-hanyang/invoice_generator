@@ -1,12 +1,10 @@
 const DEFAULT_BUSINESS = {
   name: 'KAJANG REPAIRS & SERVICE CENTRE',
-  nameSecondary: '加影汽車修理中心',
   address: '23, Jalan Zamrud 1, Taman Zamrud, Batu 16, Jln. Semenyih, 43000 Kajang, Selangor.',
   tel: '03-8736 8123',
   handPhone: '019-228 0492',
   gstRegNo: '000957243392',
   specialtyEn: 'Specialist in Car Air-Cond., Car Wiring, Checking, Alternater, Starter & Engine.',
-  specialtyZh: '專修理汽車電器,冷氣,引擎與貴進口各國本地電池',
 }
 
 const cell = (extra = {}) => ({
@@ -46,8 +44,8 @@ export default function InvoiceTemplate({ invoice, business }) {
   return (
     <div style={{
       width: '148mm',
-      fontFamily: 'Arial, "Microsoft YaHei", "PingFang SC", "SimHei", sans-serif',
-      fontSize: '8.5px',
+      fontFamily: "'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-serif",
+      fontSize: '10px',
       color: '#111',
       background: '#fff',
       padding: '10mm 8mm',
@@ -57,20 +55,17 @@ export default function InvoiceTemplate({ invoice, business }) {
       {/* ── Business Header ── */}
       <div style={{
         border: '1.5px solid #111',
-        padding: '8px 12px',
+        padding: '10px 14px',
         textAlign: 'center',
-        marginBottom: '2px',
+        marginBottom: '8px',
       }}>
-        <div style={{ fontSize: '14px', fontWeight: '800', letterSpacing: '0.5px', marginBottom: '2px' }}>
+        <div style={{ fontSize: '20px', fontWeight: '800', letterSpacing: '0.5px', marginBottom: '2px' }}>
           {biz.name}
         </div>
-        {biz.nameSecondary && (
-          <div style={{ fontSize: '11px', marginBottom: '3px' }}>{biz.nameSecondary}</div>
-        )}
         {biz.address && (
-          <div style={{ fontSize: '7.5px', color: '#333', marginBottom: '2px' }}>{biz.address}</div>
+          <div style={{ fontSize: '11px', marginBottom: '4px' }}>{biz.address}</div>
         )}
-        <div style={{ fontSize: '7.5px', marginBottom: '2px' }}>
+        <div style={{ fontSize: '11px', marginBottom: '2px' }}>
           {biz.tel && <span>Tel: {biz.tel}</span>}
           {biz.tel && biz.handPhone && <span style={{ margin: '0 8px' }}>|</span>}
           {biz.handPhone && <span>H/P: {biz.handPhone}</span>}
@@ -78,18 +73,13 @@ export default function InvoiceTemplate({ invoice, business }) {
           {biz.handPhone2 && <span>H/P: {biz.handPhone2}</span>}
         </div>
         {biz.gstRegNo && (
-          <div style={{ fontSize: '7.5px', fontWeight: '700', marginBottom: '2px' }}>
+          <div style={{ fontSize: '11px', fontWeight: '700', marginBottom: '2px' }}>
             GST Reg. No.: {biz.gstRegNo}
           </div>
         )}
-        {(biz.specialtyZh || biz.specialtyEn) && (
+        {biz.specialtyEn && (
           <div style={{ borderTop: '1px solid #aaa', marginTop: '5px', paddingTop: '4px' }}>
-            {biz.specialtyZh && (
-              <div style={{ fontSize: '8px', marginBottom: '2px' }}>{biz.specialtyZh}</div>
-            )}
-            {biz.specialtyEn && (
-              <div style={{ fontSize: '7px', fontStyle: 'italic', color: '#444' }}>{biz.specialtyEn}</div>
-            )}
+            <div style={{ fontSize: '10px', fontStyle: 'italic', color: '#444' }}>{biz.specialtyEn}</div>
           </div>
         )}
       </div>
@@ -97,13 +87,13 @@ export default function InvoiceTemplate({ invoice, business }) {
       {/* ── INVOICE title ── */}
       <div style={{
         textAlign: 'center',
-        fontSize: '10.5px',
+        fontSize: '13px',
         fontWeight: '700',
         letterSpacing: '4px',
-        padding: '5px 0',
+        padding: '10px 0',
         color: '#111',
       }}>
-        TAX INVOICE &nbsp;/&nbsp; 稅務發票
+        TAX INVOICE
       </div>
 
       {/* ── Meta: Left = Car Plate + Phone, Right = Invoice No + Date ── */}
@@ -137,11 +127,11 @@ export default function InvoiceTemplate({ invoice, business }) {
       </div>
 
       {/* ── Items Table ── */}
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '8px', marginBottom: '5px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '5px' }}>
         <thead>
           <tr>
             <th style={hcell({ width: '22px', textAlign: 'center' })}>#</th>
-            <th style={hcell({ textAlign: 'left' })}>Description / 說明</th>
+            <th style={hcell({ textAlign: 'left' })}>Description</th>
             <th style={hcell({ width: '34px', textAlign: 'center' })}>Qty</th>
             <th style={hcell({ width: '66px', textAlign: 'right' })}>Unit Price (RM)</th>
             <th style={hcell({ width: '66px', textAlign: 'right' })}>Amount (RM)</th>
@@ -157,7 +147,7 @@ export default function InvoiceTemplate({ invoice, business }) {
               <td style={cell({ textAlign: 'right' })}>{fmt(item.amount)}</td>
             </tr>
           ))}
-          {items.length < 5 && Array.from({ length: 5 - items.length }).map((_, i) => (
+          {items.length < 8 && Array.from({ length: 8 - items.length }).map((_, i) => (
             <tr key={`empty-${i}`}>
               <td style={cell({ color: 'transparent' })}>-</td>
               <td style={cell()}>&nbsp;</td>
@@ -176,7 +166,7 @@ export default function InvoiceTemplate({ invoice, business }) {
           borderRadius: '2px',
           padding: '4px 7px',
           marginBottom: '6px',
-          fontSize: '8px',
+          fontSize: '10px',
           width: 'calc(100% - 168px)',
           boxSizing: 'border-box',
         }}>
@@ -187,7 +177,7 @@ export default function InvoiceTemplate({ invoice, business }) {
 
       {/* ── Totals ── */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-        <table style={{ fontSize: '8.5px', borderCollapse: 'collapse', width: '168px', tableLayout: 'fixed' }}>
+        <table style={{ fontSize: '10px', borderCollapse: 'collapse', width: '168px', tableLayout: 'fixed' }}>
           <colgroup>
             <col style={{ width: '102px' }} />
             <col style={{ width: '66px' }} />
@@ -203,10 +193,10 @@ export default function InvoiceTemplate({ invoice, business }) {
             </tr>
             {payments.map((p, i) => (
               <tr key={i}>
-                <td style={{ padding: '2px 8px', textAlign: 'right', color: '#444', fontSize: '8px' }}>
+                <td style={{ padding: '2px 8px', textAlign: 'right', color: '#444', fontSize: '9px' }}>
                   Paid ({p.paymentDate || ''}):
                 </td>
-                <td style={{ padding: '2px 8px', textAlign: 'right', color: '#444', fontSize: '8px' }}>
+                <td style={{ padding: '2px 8px', textAlign: 'right', color: '#444', fontSize: '9px' }}>
                   RM {fmt(p.amount)}
                 </td>
               </tr>
@@ -247,7 +237,7 @@ export default function InvoiceTemplate({ invoice, business }) {
         marginTop: '12px',
         paddingTop: '8px',
         borderTop: '1px solid #ddd',
-        fontSize: '8px',
+        fontSize: '10px',
         color: '#555',
       }}>
         <div style={{ textAlign: 'center' }}>
@@ -256,7 +246,6 @@ export default function InvoiceTemplate({ invoice, business }) {
         </div>
         <div style={{ textAlign: 'center', color: '#777' }}>
           <div>Thank you for your business!</div>
-          <div style={{ marginTop: '2px' }}>歡迎再次光臨</div>
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ marginBottom: '33px' }}>Authorised By:</div>

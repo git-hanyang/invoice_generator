@@ -40,7 +40,7 @@ export default function CustomerAutocomplete({ value, phone, onChange, onPhoneCh
     <div ref={wrapRef} className="relative">
       <input
         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 uppercase"
-        placeholder="Car plate (e.g. ABC1234)"
+        placeholder="Car plate"
         value={value}
         onChange={handleInput}
         onFocus={() => suggestions.length > 0 && setOpen(true)}

@@ -22,7 +22,9 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   // Auto-fill next invoice number for new invoices
   useEffect(() => {
     if (!initialData) {
-      api.get('/invoices/next-number').then(r => setInvoiceNumber(r.data.invoiceNumber)).catch(() => {})
+      api.get('/invoices/next-number')
+        .then(r => setInvoiceNumber(r.data.invoiceNumber || 'INV-001'))
+        .catch(() => setInvoiceNumber('INV-001'))
     }
   }, [])
 
@@ -220,7 +222,9 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
         {!initialData && (
           <button
             onClick={() => {
-              api.get('/invoices/next-number').then(r => setInvoiceNumber(r.data.invoiceNumber)).catch(() => {})
+              api.get('/invoices/next-number')
+                .then(r => setInvoiceNumber(r.data.invoiceNumber || 'INV-001'))
+                .catch(() => setInvoiceNumber('INV-001'))
               setInvoiceDate(today)
               setCarPlate('')
               setCustomerId(null)
