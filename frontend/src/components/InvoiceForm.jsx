@@ -407,7 +407,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 items-center">
+          <div className={`flex gap-3 items-center ${initialData ? 'justify-center' : ''}`}>
             {!initialData && (
               <button
                 onClick={handleDownloadPdf}
