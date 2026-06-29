@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,13 +53,6 @@ public class InvoiceService {
         invoice.setTotalAmount(req.getTotalAmount());
         invoice.setRemark(req.getRemark());
 
-        if (req.getPdfBase64() != null && !req.getPdfBase64().isBlank()) {
-            String raw = req.getPdfBase64();
-            int comma = raw.indexOf(',');
-            String encoded = comma >= 0 ? raw.substring(comma + 1) : raw;
-            invoice.setPdfData(Base64.getMimeDecoder().decode(encoded));
-        }
-
         invoice.getItems().clear();
         if (req.getItems() != null) {
             for (int i = 0; i < req.getItems().size(); i++) {
@@ -90,7 +82,7 @@ public class InvoiceService {
             }
         }
 
-        return toDto(invoiceRepo.save(invoice), false);
+        return toDto(invoiceRepo.save(invoice));
     }
 
     @Transactional
@@ -105,12 +97,12 @@ public class InvoiceService {
         List<Invoice> results = (query == null || query.isBlank())
                 ? invoiceRepo.findAllIncludeDeletedOrderByDateDesc()
                 : invoiceRepo.searchAllIncludeDeletedByCarPlateOrPhone(query);
-        return results.stream().map(i -> toDto(i, false)).collect(Collectors.toList());
+        return results.stream().map(i -> toDto(i)).collect(Collectors.toList());
     }
 
     public InvoiceDto getById(Long id) {
         Invoice inv = invoiceRepo.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
-        return toDto(inv, true);
+        return toDto(inv);
     }
 
     public boolean invoiceNumberExists(String invoiceNumber) {
@@ -131,7 +123,7 @@ public class InvoiceService {
         return String.format("INV-%03d", max + 1);
     }
 
-    private InvoiceDto toDto(Invoice inv, boolean includePdf) {
+    private InvoiceDto toDto(Invoice inv) {
         InvoiceDto dto = new InvoiceDto();
         dto.setId(inv.getId());
         dto.setInvoiceNumber(inv.getInvoiceNumber());
@@ -165,10 +157,6 @@ public class InvoiceService {
         }).collect(Collectors.toList()));
 
         dto.setDeletedAt(inv.getDeletedAt());
-
-        if (includePdf && inv.getPdfData() != null) {
-            dto.setPdfBase64("data:application/pdf;base64," + Base64.getEncoder().encodeToString(inv.getPdfData()));
-        }
 
         return dto;
     }

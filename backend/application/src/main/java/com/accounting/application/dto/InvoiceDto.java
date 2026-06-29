@@ -17,6 +17,5 @@ public class InvoiceDto {
     private String remark;
     private List<InvoiceItemDto> items;
     private List<InvoicePaymentDto> payments;
-    private String pdfBase64;
     private LocalDateTime deletedAt;
 }
