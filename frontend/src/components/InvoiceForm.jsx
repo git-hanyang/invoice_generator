@@ -404,27 +404,31 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
 
           {/* Actions */}
           <div className="flex gap-3 items-center">
-            <button
-              onClick={handleDownloadPdf}
-              disabled={!savedOk || generating}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
-            >
-              {generating && !saving ? 'Generating...' : 'Download PDF'}
-            </button>
+            {!initialData && (
+              <button
+                onClick={handleDownloadPdf}
+                disabled={!savedOk || generating}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              >
+                {generating && !saving ? 'Generating...' : 'Download PDF'}
+              </button>
+            )}
             <button
               onClick={handleSave}
-              disabled={generating || saving || savedOk}
-              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${generating || saving || savedOk ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+              disabled={generating || saving || (!initialData && savedOk)}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${generating || saving || (!initialData && savedOk) ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
             >
               {saving ? 'Saving...' : 'Save Invoice'}
             </button>
-            <button
-              onClick={handlePrint}
-              disabled={!savedOk || generating}
-              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
-            >
-              Print
-            </button>
+            {!initialData && (
+              <button
+                onClick={handlePrint}
+                disabled={!savedOk || generating}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+              >
+                Print
+              </button>
+            )}
             {msg && (
               <span className={`text-sm ${msg.includes('success') ? 'text-green-600' : 'text-red-500'}`}>
                 {msg}
