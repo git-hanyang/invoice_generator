@@ -228,6 +228,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               setRemark('')
               setItems([emptyItem()])
               setPayments([])
+              setSavedOk(false)
+              setMsg('')
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 border border-blue-200 hover:bg-blue-50 transition"
             title="Clear form for new invoice"
@@ -411,8 +413,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
             </button>
             <button
               onClick={handleSave}
-              disabled={generating || saving}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition disabled:opacity-50"
+              disabled={generating || saving || savedOk}
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${generating || saving || savedOk ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
             >
               {saving ? 'Saving...' : 'Save Invoice'}
             </button>
