@@ -1,5 +1,5 @@
 $date = Get-Date -Format "yyyy-MM-dd_HHmm"
-$outDir = "C:\Users\Tan Han Yang\OneDrive\KRS_Backups"
+$outDir = "C:\Users\User\OneDrive\KRS_Backups"
 $outFile = "$outDir\KRS_$date.sql"
 
 if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir | Out-Null }
