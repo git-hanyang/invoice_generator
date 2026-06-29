@@ -178,6 +178,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   async function handleSave() {
     if (!invoiceNumber.trim()) { setMsg('Invoice number required.'); return }
     if (!carPlate.trim()) { setMsg('Car plate required.'); return }
+    if (items.some(i => !i.description.trim())) { setMsg('All work descriptions required.'); return }
     setSaving(true)
     setMsg('')
     try {
@@ -403,8 +404,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
           <div className="flex gap-3 items-center">
             <button
               onClick={handleDownloadPdf}
-              disabled={generating}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm font-medium transition disabled:opacity-50"
+              disabled={!savedOk || generating}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${savedOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
             >
               {generating && !saving ? 'Generating...' : 'Download PDF'}
             </button>
