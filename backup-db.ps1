@@ -22,4 +22,4 @@ if ($waited -ge $maxWait) {
 docker exec mariadb_local mariadb-dump -uroot -proot KRS | Out-File -FilePath $outFile -Encoding utf8 -Force
 
 # Keep latest 3 dumps only
-Get-ChildItem "$outDir\KRS_*.sql" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 3 | Remove-Item -Force
+Get-ChildItem "$outDir\KRS_*.sql" | Sort-Object LastWriteTime -Descending | Select-Object -Skip 3 | Remove-Item -Force -ErrorAction SilentlyContinue
