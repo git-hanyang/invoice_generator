@@ -178,12 +178,9 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   async function handleSave() {
     if (!invoiceNumber.trim()) { setMsg('Invoice number required.'); return }
     if (!carPlate.trim()) { setMsg('Car plate required.'); return }
-    setGenerating(true)
     setSaving(true)
     setMsg('')
     try {
-      const pdfBase64 = await buildPdf()
-
       const payload = {
         invoiceNumber: invoiceNumber.trim(),
         carPlate: carPlate.trim(),
@@ -203,7 +200,6 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
           amount: parseFloat(p.amount) || 0,
           paymentDate: p.paymentDate,
         })),
-        pdfBase64,
       }
       await api.post('/invoices', payload)
       setMsg('Invoice saved successfully.')
@@ -212,7 +208,6 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     } catch (err) {
       setMsg(err.response?.data?.message || 'Save failed.')
     } finally {
-      setGenerating(false)
       setSaving(false)
     }
   }

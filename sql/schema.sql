@@ -53,7 +53,6 @@ CREATE TABLE IF NOT EXISTS invoices (
     customer_id BIGINT NOT NULL,
     invoice_date DATE NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    pdf_data LONGBLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(id),
