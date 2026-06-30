@@ -3,6 +3,7 @@ services:
     image: mariadb:11
     container_name: mariadb_local
     restart: unless-stopped
+    command: --ft-min-word-len=2
     environment:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: KRS
