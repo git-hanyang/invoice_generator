@@ -35,16 +35,21 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS customers (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     car_plate VARCHAR(50) NOT NULL,
-    phone VARCHAR(30),
-    UNIQUE KEY uq_car_plate_phone (car_plate, phone)
+    phone VARCHAR(30) NOT NULL DEFAULT '',
+    vehicle_model VARCHAR(200) NOT NULL DEFAULT '',
+    UNIQUE KEY uq_car_plate_phone_vehicle (car_plate, phone, vehicle_model)
 );
 
 CREATE TABLE IF NOT EXISTS work_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     description TEXT NOT NULL,
+    vehicle_model VARCHAR(200) NOT NULL DEFAULT '',
     unit_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE INDEX uq_description (description(255))
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uq_vehicle_model_description (vehicle_model, description(255)),
+    FULLTEXT INDEX ft_description (description),
+    FULLTEXT INDEX ft_vehicle_model (vehicle_model)
 );
 
 CREATE TABLE IF NOT EXISTS invoices (

@@ -7,4 +7,5 @@ public class CustomerDto {
     private Long id;
     private String carPlate;
     private String phone;
+    private String vehicleModel;
 }

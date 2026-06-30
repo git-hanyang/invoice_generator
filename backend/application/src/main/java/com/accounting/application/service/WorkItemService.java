@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,22 @@ public class WorkItemService {
     private final WorkItemRepository repo;
 
     public List<WorkItemDto> search(String query) {
-        return repo.findByDescriptionContainingIgnoreCaseOrderByDescriptionAsc(query)
+        if (query == null || query.isBlank()) return List.of();
+        return repo.searchByDescription(toFulltextQuery(query))
                 .stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public List<WorkItemDto> searchByVehicleModel(String query) {
+        if (query == null || query.isBlank()) return List.of();
+        return repo.searchByVehicleModel(toFulltextQuery(query))
+                .stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    private String toFulltextQuery(String raw) {
+        return Arrays.stream(raw.trim().split("\\s+"))
+                .filter(t -> !t.isEmpty())
+                .map(t -> t + "*")
+                .collect(Collectors.joining(" "));
     }
 
     public List<WorkItemDto> getAll() {
@@ -34,16 +49,19 @@ public class WorkItemService {
             item = new WorkItem();
         }
         item.setDescription(dto.getDescription());
+        item.setVehicleModel(dto.getVehicleModel());
         item.setUnitPrice(dto.getUnitPrice() != null ? dto.getUnitPrice() : BigDecimal.ZERO);
         return toDto(repo.save(item));
     }
 
     @Transactional
-    public void upsertByDescription(String description, BigDecimal unitPrice) {
+    public void upsertByDescriptionAndVehicleModel(String description, String vehicleModel, BigDecimal unitPrice) {
         if (description == null || description.isBlank()) return;
-        WorkItem item = repo.findFirstByDescriptionIgnoreCase(description.trim())
+        String vm = CustomerService.toTitleCase(vehicleModel);
+        WorkItem item = repo.findFirstByDescriptionIgnoreCaseAndVehicleModelIgnoreCase(description.trim(), vm)
                 .orElse(new WorkItem());
         item.setDescription(description.trim());
+        item.setVehicleModel(vm);
         item.setUnitPrice(unitPrice != null ? unitPrice : BigDecimal.ZERO);
         repo.save(item);
     }
@@ -56,6 +74,7 @@ public class WorkItemService {
         WorkItemDto dto = new WorkItemDto();
         dto.setId(w.getId());
         dto.setDescription(w.getDescription());
+        dto.setVehicleModel(w.getVehicleModel());
         dto.setUnitPrice(w.getUnitPrice());
         return dto;
     }

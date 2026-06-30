@@ -25,6 +25,11 @@ public class WorkItemController {
         return ResponseEntity.ok(workItemService.search(query));
     }
 
+    @GetMapping("/search/vehicle-model")
+    public ResponseEntity<List<WorkItemDto>> searchByVehicleModel(@RequestParam String query) {
+        return ResponseEntity.ok(workItemService.searchByVehicleModel(query));
+    }
+
     @PostMapping
     public ResponseEntity<WorkItemDto> save(@RequestBody WorkItemDto dto) {
         return ResponseEntity.ok(workItemService.save(dto));

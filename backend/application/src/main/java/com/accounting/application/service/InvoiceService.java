@@ -22,27 +22,10 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceDto save(SaveInvoiceRequest req) {
-        Customer customer;
-        if (req.getCustomerId() != null) {
-            String newPhone = (req.getPhone() != null && !req.getPhone().isBlank()) ? req.getPhone() : null;
-            var existing = customerRepo.findByCarPlateIgnoreCaseAndPhone(req.getCarPlate(), newPhone);
-            if (existing.isPresent() && !existing.get().getId().equals(req.getCustomerId())) {
-                // new (carPlate, phone) already exists as different row — reassign to it
-                Long oldId = req.getCustomerId();
-                customer = existing.get();
-                // delete old customer if only this invoice references it
-                if (invoiceRepo.countByCustomer_Id(oldId) <= 1) {
-                    customerRepo.deleteById(oldId);
-                }
-            } else {
-                customer = customerRepo.findById(req.getCustomerId()).orElseThrow();
-                customer.setPhone(newPhone);
-                customer = customerRepo.save(customer);
-            }
-        } else {
-            CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone());
-            customer = customerRepo.findById(customerDto.getId()).orElseThrow();
-        }
+        CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone(), req.getVehicleModel());
+        Customer customer = customerRepo.findById(customerDto.getId()).orElseThrow();
+        Long oldCustomerId = (req.getCustomerId() != null && !req.getCustomerId().equals(customer.getId()))
+                ? req.getCustomerId() : null;
 
         Invoice invoice = invoiceRepo.findByInvoiceNumberAndDeletedAtIsNull(req.getInvoiceNumber())
                 .orElse(Invoice.builder().build());
@@ -51,6 +34,7 @@ public class InvoiceService {
         invoice.setCustomer(customer);
         invoice.setInvoiceDate(req.getInvoiceDate());
         invoice.setTotalAmount(req.getTotalAmount());
+        invoice.setVehicleModel(req.getVehicleModel());
         invoice.setRemark(req.getRemark());
 
         invoice.getItems().clear();
@@ -66,7 +50,7 @@ public class InvoiceService {
                         .sortOrder(i)
                         .build();
                 invoice.getItems().add(item);
-                workItemService.upsertByDescription(d.getDescription(), d.getUnitPrice());
+                workItemService.upsertByDescriptionAndVehicleModel(d.getDescription(), req.getVehicleModel(), d.getUnitPrice());
             }
         }
 
@@ -82,7 +66,14 @@ public class InvoiceService {
             }
         }
 
-        return toDto(invoiceRepo.save(invoice));
+        InvoiceDto result = toDto(invoiceRepo.save(invoice));
+
+        // clean up old customer row after invoice is reassigned — FK safe now
+        if (oldCustomerId != null && invoiceRepo.countByCustomer_Id(oldCustomerId) == 0) {
+            customerRepo.deleteById(oldCustomerId);
+        }
+
+        return result;
     }
 
     @Transactional
@@ -129,6 +120,7 @@ public class InvoiceService {
         dto.setInvoiceNumber(inv.getInvoiceNumber());
         dto.setInvoiceDate(inv.getInvoiceDate());
         dto.setTotalAmount(inv.getTotalAmount());
+        dto.setVehicleModel(inv.getVehicleModel());
         dto.setRemark(inv.getRemark());
 
         CustomerDto cd = new CustomerDto();

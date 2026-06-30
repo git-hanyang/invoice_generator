@@ -32,6 +32,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   const [invoiceDate, setInvoiceDate] = useState(initialData?.invoiceDate || today)
   const [carPlate, setCarPlate] = useState(initialData?.customer?.carPlate || '')
   const [customerId, setCustomerId] = useState(initialData?.customer?.id || null)
+  const [vehicleModel, setVehicleModel] = useState(initialData?.vehicleModel || '')
   const [phone, setPhone] = useState(initialData?.customer?.phone || '')
   const [remark, setRemark] = useState(initialData?.remark || '')
   const [items, setItems] = useState(
@@ -121,6 +122,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       invoiceNumber,
       invoiceDate,
       carPlate,
+      vehicleModel,
       phone,
       remark,
       items: items.map(i => ({
@@ -187,6 +189,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       const payload = {
         invoiceNumber: invoiceNumber.trim(),
         carPlate: carPlate.trim(),
+        vehicleModel: vehicleModel.trim(),
         phone: phone.trim(),
         customerId,
         invoiceDate,
@@ -228,6 +231,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               setInvoiceDate(today)
               setCarPlate('')
               setCustomerId(null)
+              setVehicleModel('')
               setPhone('')
               setRemark('')
               setItems([emptyItem()])
@@ -289,6 +293,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                 phone={phone}
                 onChange={handleCarPlateChange}
                 onPhoneChange={setPhone}
+                onVehicleModelChange={setVehicleModel}
               />
             </div>
             <div>
@@ -298,6 +303,15 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                 placeholder="e.g. 0123456789"
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Vehicle Model</label>
+              <input
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="e.g. Toyota Vios 2020"
+                value={vehicleModel}
+                onChange={e => setVehicleModel(e.target.value)}
               />
             </div>
           </div>

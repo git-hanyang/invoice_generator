@@ -35,6 +35,9 @@ public class Invoice {
     @Column(name = "total_amount", precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(name = "vehicle_model", length = 200)
+    private String vehicleModel;
+
     @Column(name = "remark", columnDefinition = "TEXT")
     private String remark;
 

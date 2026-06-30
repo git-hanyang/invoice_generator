@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import api from '../api/axios'
 
-export default function CustomerAutocomplete({ value, phone, onChange, onPhoneChange }) {
+export default function CustomerAutocomplete({ value, phone, onChange, onPhoneChange, onVehicleModelChange }) {
   const [suggestions, setSuggestions] = useState([])
   const [open, setOpen] = useState(false)
   const timerRef = useRef(null)
@@ -32,6 +32,7 @@ export default function CustomerAutocomplete({ value, phone, onChange, onPhoneCh
   function select(c) {
     onChange(c.carPlate, c.id)
     onPhoneChange(c.phone || '')
+    if (onVehicleModelChange) onVehicleModelChange(c.vehicleModel || '')
     setOpen(false)
     setSuggestions([])
   }
@@ -51,10 +52,15 @@ export default function CustomerAutocomplete({ value, phone, onChange, onPhoneCh
             <li
               key={c.id}
               onMouseDown={() => select(c)}
-              className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm flex justify-between"
+              className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm"
             >
-              <span className="font-medium">{c.carPlate}</span>
-              <span className="text-gray-400">{c.phone}</span>
+              <div className="flex justify-between">
+                <span className="font-medium">{c.carPlate}</span>
+                <span className="text-gray-400">{c.phone}</span>
+              </div>
+              {c.vehicleModel && (
+                <div className="text-xs text-gray-400 mt-0.5">{c.vehicleModel}</div>
+              )}
             </li>
           ))}
         </ul>

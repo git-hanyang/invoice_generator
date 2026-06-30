@@ -8,5 +8,6 @@ import java.math.BigDecimal;
 public class WorkItemDto {
     private Long id;
     private String description;
+    private String vehicleModel;
     private BigDecimal unitPrice;
 }

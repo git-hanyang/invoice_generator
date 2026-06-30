@@ -14,6 +14,7 @@ public class InvoiceDto {
     private CustomerDto customer;
     private LocalDate invoiceDate;
     private BigDecimal totalAmount;
+    private String vehicleModel;
     private String remark;
     private List<InvoiceItemDto> items;
     private List<InvoicePaymentDto> payments;
