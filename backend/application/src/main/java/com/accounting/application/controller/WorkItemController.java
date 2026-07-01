@@ -21,8 +21,10 @@ public class WorkItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<WorkItemDto>> search(@RequestParam String query) {
-        return ResponseEntity.ok(workItemService.search(query));
+    public ResponseEntity<List<WorkItemDto>> search(
+            @RequestParam String query,
+            @RequestParam(required = false) String vehicleModel) {
+        return ResponseEntity.ok(workItemService.search(query, vehicleModel));
     }
 
     @GetMapping("/search/vehicle-model")

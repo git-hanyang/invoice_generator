@@ -333,6 +333,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                   <span className="text-sm text-gray-400 w-5 text-right">{idx + 1}.</span>
                   <WorkItemAutocomplete
                     value={item.description}
+                    vehicleModel={vehicleModel}
                     onChange={val => updateItem(idx, 'description', val)}
                     onSelect={wi => handleSelectWorkItem(idx, wi)}
                   />
