@@ -1,0 +1,327 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1783426445.1674025,
+    "ast_hash": "6fd03bd2bbc5ec19acd28d1180c560c5",
+    "semantic_hash": ""
+  },
+  "backend/application/mvnw": {
+    "mtime": 1778251139.6316917,
+    "ast_hash": "ab50dd89da7da2346b28003352eeeeeb",
+    "semantic_hash": ""
+  },
+  "backend/application/pom.xml": {
+    "mtime": 1782299684.2112758,
+    "ast_hash": "c3bd0b9e2d408805d58843ecf37d2f6b",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/AccountingApplication.java": {
+    "mtime": 1782201299.2798138,
+    "ast_hash": "29e338c795b8a7af4d8d8a59957f4d67",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/config/CorsConfig.java": {
+    "mtime": 1782299684.2122755,
+    "ast_hash": "5e8e57e6bcb86f17cee02c389464a3f6",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/config/DataInitializer.java": {
+    "mtime": 1782299684.2122755,
+    "ast_hash": "e1ae7309431c66286b971cafdcbdb4b8",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/config/SecurityConfig.java": {
+    "mtime": 1782746050.2295568,
+    "ast_hash": "6de58178ef36620e4cb9721a93b2b314",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/controller/AuthController.java": {
+    "mtime": 1782299684.2142754,
+    "ast_hash": "dd4c8a314596ce0529f32406fb0bcc50",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/controller/BusinessController.java": {
+    "mtime": 1782299684.2142754,
+    "ast_hash": "eba5f85b91e57f139677b9fc527e5481",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/controller/CustomerController.java": {
+    "mtime": 1782299684.2152758,
+    "ast_hash": "1d9afbb9bf97068dbb25cd7d7e6e0f8b",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/controller/InvoiceController.java": {
+    "mtime": 1782299684.2152758,
+    "ast_hash": "586c0aa3043e6299d1790a920d2b5b50",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/controller/WorkItemController.java": {
+    "mtime": 1782906631.7112856,
+    "ast_hash": "4a8e756ee33f4ee788c001c30dec75a4",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/BusinessDto.java": {
+    "mtime": 1782299684.2162757,
+    "ast_hash": "6f62ca285783ab6ab6dd02be45f60b26",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/CustomerDto.java": {
+    "mtime": 1782827503.3569138,
+    "ast_hash": "08353715cccf53ee7307d7193c912b99",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/InvoiceDto.java": {
+    "mtime": 1782827503.3579144,
+    "ast_hash": "d2274fecfa21fc9161fcb24a0d33e400",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/InvoiceItemDto.java": {
+    "mtime": 1782299684.217275,
+    "ast_hash": "da227abce7ea5e876f4558575f829cd4",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/InvoicePaymentDto.java": {
+    "mtime": 1782299684.218275,
+    "ast_hash": "3a6dfc46d04f1663db906ff871c7d696",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/LoginRequest.java": {
+    "mtime": 1782299684.218275,
+    "ast_hash": "822273a05bca91f16e6d3c7cc09d80e8",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/LoginResponse.java": {
+    "mtime": 1782299684.218275,
+    "ast_hash": "64e375ba233f0f47b64b5c1604dcb2b8",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/SaveInvoiceRequest.java": {
+    "mtime": 1782827503.3579144,
+    "ast_hash": "28240c80a842d9d8315bb5db4d9c2ec5",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/dto/WorkItemDto.java": {
+    "mtime": 1782827503.3579144,
+    "ast_hash": "7919ac24c29f35fcaa0f6b90abc97b04",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/Business.java": {
+    "mtime": 1782299684.2202756,
+    "ast_hash": "04dd23271f18eda0889d78e66b3edcbd",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/Customer.java": {
+    "mtime": 1782827503.358915,
+    "ast_hash": "2581ca36be974bce771bcf2b247685b4",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/Invoice.java": {
+    "mtime": 1782827503.3599143,
+    "ast_hash": "4e848f307b1f373257c3b5485735266d",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/InvoiceItem.java": {
+    "mtime": 1782299684.2212763,
+    "ast_hash": "aa303003f5bda8071e99e870d3be355c",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/InvoicePayment.java": {
+    "mtime": 1782299684.2212763,
+    "ast_hash": "2679dac4db546e1062905caa8c82445a",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/User.java": {
+    "mtime": 1782299684.2212763,
+    "ast_hash": "0b0bd6ff72ab7845bcee04223df33b63",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/entity/WorkItem.java": {
+    "mtime": 1782827503.3599143,
+    "ast_hash": "48a7e6588c901ff42d71ca043cde3315",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/repository/BusinessRepository.java": {
+    "mtime": 1782299684.2227805,
+    "ast_hash": "243d719dd274bedb6f84bede5afcfb2e",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/repository/CustomerRepository.java": {
+    "mtime": 1782827503.3599143,
+    "ast_hash": "1a23a3814fc024a38cac7d684299e0eb",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/repository/InvoiceRepository.java": {
+    "mtime": 1782347174.3292718,
+    "ast_hash": "3416d82dd11eeb5d6926fb030c4ba46d",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/repository/UserRepository.java": {
+    "mtime": 1782299684.2237852,
+    "ast_hash": "ae2abf98ad57168672825407c5619ec1",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/repository/WorkItemRepository.java": {
+    "mtime": 1782906631.7122843,
+    "ast_hash": "71bff8e44b8538dcea0312bba7c818d5",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/security/JwtFilter.java": {
+    "mtime": 1782299684.2247858,
+    "ast_hash": "c843ac36e530b8e2f19096039a02bf7a",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/security/JwtUtil.java": {
+    "mtime": 1782299684.2247858,
+    "ast_hash": "681f055a1ae852ce273cfda09588be47",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/security/UserDetailsServiceImpl.java": {
+    "mtime": 1782299684.225785,
+    "ast_hash": "bc811128f4bdac2b15a6eea128816c84",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/service/AuthService.java": {
+    "mtime": 1782299684.225785,
+    "ast_hash": "bc5eae3efcb411dfc088a27639470032",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/service/CustomerService.java": {
+    "mtime": 1782827503.360916,
+    "ast_hash": "b8857f04a5990c1c1abcd8b607f3a1db",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/service/InvoiceService.java": {
+    "mtime": 1782827503.3619144,
+    "ast_hash": "6d27b6d852c123c746f414766f661bf4",
+    "semantic_hash": ""
+  },
+  "backend/application/src/main/java/com/accounting/application/service/WorkItemService.java": {
+    "mtime": 1782906631.7122843,
+    "ast_hash": "36f77c58a8e90fad8c3b94d230b7f686",
+    "semantic_hash": ""
+  },
+  "backend/application/src/test/java/com/example/application/ApplicationTests.java": {
+    "mtime": 1778251139.7067099,
+    "ast_hash": "ecd2f7a3fb10d4cbf125426d99ef6293",
+    "semantic_hash": ""
+  },
+  "backup-db.ps1": {
+    "mtime": 1782827503.362914,
+    "ast_hash": "d34441c48852003b9e18674dc10083b7",
+    "semantic_hash": ""
+  },
+  "frontend/package.json": {
+    "mtime": 1782299684.2304032,
+    "ast_hash": "387c1f43e8ef1ea0c487f50617a01851",
+    "semantic_hash": ""
+  },
+  "frontend/postcss.config.js": {
+    "mtime": 1782299684.231403,
+    "ast_hash": "762a94d1749c8e97eebf3f94102e8eb2",
+    "semantic_hash": ""
+  },
+  "frontend/src/App.jsx": {
+    "mtime": 1782299684.2324033,
+    "ast_hash": "6a8cdb7982ce2dad9047f32470c5be18",
+    "semantic_hash": ""
+  },
+  "frontend/src/api/axios.js": {
+    "mtime": 1782299684.2334025,
+    "ast_hash": "908ae00e658cf470f73d81d2b28849fe",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/CustomerAutocomplete.jsx": {
+    "mtime": 1782827503.362914,
+    "ast_hash": "07029a462486b1be0372f0438a5d703e",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/InvoiceForm.jsx": {
+    "mtime": 1782906631.7132845,
+    "ast_hash": "05611d7f52ef5babdd05ed4abde5158c",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/InvoiceHistory.jsx": {
+    "mtime": 1782308545.8285117,
+    "ast_hash": "ddcc233479af5a5dd876d08739d85931",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/InvoiceTemplate.jsx": {
+    "mtime": 1782827503.3649151,
+    "ast_hash": "1f4ccfa883e5391d83a261d7d20f6785",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/WorkItemAutocomplete.jsx": {
+    "mtime": 1782906631.7142847,
+    "ast_hash": "cf4114a5a95cb07e0148d59c74b28e6e",
+    "semantic_hash": ""
+  },
+  "frontend/src/main.jsx": {
+    "mtime": 1782299684.2364028,
+    "ast_hash": "d3f37e11778a47b718bc98aa31077c70",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/BusinessSetup.jsx": {
+    "mtime": 1782299684.2374022,
+    "ast_hash": "f0a85a4fc316b0baa430eca05919567a",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/Dashboard.jsx": {
+    "mtime": 1783428597.7902339,
+    "ast_hash": "5ce195787580482908f0bfaf112c9610",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/Login.jsx": {
+    "mtime": 1782299684.2374022,
+    "ast_hash": "c62b8591d7e89877b71dbd79bccfa6bd",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/Pricing.jsx": {
+    "mtime": 1783428604.3523617,
+    "ast_hash": "bdfdb8850fd809ed9bf9996607df3b8c",
+    "semantic_hash": ""
+  },
+  "frontend/src/utils/pdfGenerator.js": {
+    "mtime": 1782308545.830513,
+    "ast_hash": "a615499e3e1494e24552cfb1e96b0984",
+    "semantic_hash": ""
+  },
+  "frontend/tailwind.config.js": {
+    "mtime": 1782299684.2384033,
+    "ast_hash": "d3e2e9840e23c6ac0c622da9507fa9ae",
+    "semantic_hash": ""
+  },
+  "frontend/vite.config.js": {
+    "mtime": 1782299684.2394023,
+    "ast_hash": "6cba949f1ab38724420960e129270742",
+    "semantic_hash": ""
+  },
+  "sql/schema.sql": {
+    "mtime": 1782827503.3649151,
+    "ast_hash": "aa003a89e76d1d46d8dc162febf4c5d7",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1783426445.1654017,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  },
+  "backend/application/HELP.md": {
+    "mtime": 1778251139.6406953,
+    "ast_hash": "9658e66af530687ee81d9fa7ce93e1ae",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1782827503.362914,
+    "ast_hash": "3c2d241cfe1b16992b35b1f027c011c8",
+    "semantic_hash": ""
+  },
+  "frontend/index.html": {
+    "mtime": 1782299684.2294025,
+    "ast_hash": "fa4228730414a2926a5941af850d0e5b",
+    "semantic_hash": ""
+  },
+  "frontend/public/favicon.svg": {
+    "mtime": 1782299684.231403,
+    "ast_hash": "1eecfd3767698412c10e3765f51beb98",
+    "semantic_hash": ""
+  }
+}

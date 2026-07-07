@@ -1,0 +1,23 @@
+{
+  "0": "WorkItem",
+  "1": "InvoiceService",
+  "2": "Business",
+  "3": "InvoiceForm.jsx",
+  "4": "Customer",
+  "5": "Invoice",
+  "6": "AuthService.java",
+  "7": "devDependencies",
+  "8": "JwtFilter.java",
+  "9": "BusinessDto",
+  "10": "SecurityConfig.java",
+  "11": "mvnw",
+  "12": "CorsConfig.java",
+  "13": "Getting Started",
+  "14": "ApplicationTests.java",
+  "15": "CLAUDE.md",
+  "16": "backup-db.ps1",
+  "17": "postcss.config.js",
+  "18": "tailwind.config.js",
+  "19": "vite.config.js",
+  "20": "com.accounting:accounting-application"
+}
