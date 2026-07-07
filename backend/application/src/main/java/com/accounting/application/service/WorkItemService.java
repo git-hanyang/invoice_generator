@@ -1,7 +1,9 @@
 package com.accounting.application.service;
 
 import com.accounting.application.dto.WorkItemDto;
+import com.accounting.application.entity.Business;
 import com.accounting.application.entity.WorkItem;
+import com.accounting.application.repository.BusinessRepository;
 import com.accounting.application.repository.WorkItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,21 +19,22 @@ import java.util.stream.Collectors;
 public class WorkItemService {
 
     private final WorkItemRepository repo;
+    private final BusinessRepository businessRepository;
 
-    public List<WorkItemDto> search(String query, String vehicleModel) {
-        if (query == null || query.isBlank()) return List.of();
+    public List<WorkItemDto> search(String query, String vehicleModel, Long businessId) {
+        if (query == null || query.isBlank() || businessId == null) return List.of();
         String ftQuery = toFulltextQuery(query);
         if (vehicleModel != null && !vehicleModel.isBlank()) {
-            return repo.searchByDescriptionAndVehicleModel(ftQuery, CustomerService.toTitleCase(vehicleModel))
+            return repo.searchByDescriptionAndVehicleModel(ftQuery, CustomerService.toTitleCase(vehicleModel), businessId)
                     .stream().map(this::toDto).collect(Collectors.toList());
         }
-        return repo.searchByDescription(ftQuery)
+        return repo.searchByDescription(ftQuery, businessId)
                 .stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<WorkItemDto> searchByVehicleModel(String query) {
-        if (query == null || query.isBlank()) return List.of();
-        return repo.searchByVehicleModel(toFulltextQuery(query))
+    public List<WorkItemDto> searchByVehicleModel(String query, Long businessId) {
+        if (query == null || query.isBlank() || businessId == null) return List.of();
+        return repo.searchByVehicleModel(toFulltextQuery(query), businessId)
                 .stream().map(this::toDto).collect(Collectors.toList());
     }
 
@@ -42,8 +45,9 @@ public class WorkItemService {
                 .collect(Collectors.joining(" "));
     }
 
-    public List<WorkItemDto> getAll() {
-        return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    public List<WorkItemDto> getAll(Long businessId) {
+        List<WorkItem> items = businessId != null ? repo.findAllByBusinessId(businessId) : repo.findAll();
+        return items.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public WorkItemDto save(WorkItemDto dto) {
@@ -56,18 +60,26 @@ public class WorkItemService {
         item.setDescription(dto.getDescription());
         item.setVehicleModel(dto.getVehicleModel());
         item.setUnitPrice(dto.getUnitPrice() != null ? dto.getUnitPrice() : BigDecimal.ZERO);
+        if (dto.getBusinessId() != null) {
+            Business business = businessRepository.findById(dto.getBusinessId())
+                    .orElseThrow(() -> new IllegalArgumentException("Business not found"));
+            item.setBusiness(business);
+        }
         return toDto(repo.save(item));
     }
 
     @Transactional
-    public void upsertByDescriptionAndVehicleModel(String description, String vehicleModel, BigDecimal unitPrice) {
+    public void upsertByDescriptionAndVehicleModel(String description, String vehicleModel, BigDecimal unitPrice, Long businessId) {
         if (description == null || description.isBlank()) return;
         String vm = CustomerService.toTitleCase(vehicleModel);
-        WorkItem item = repo.findFirstByDescriptionIgnoreCaseAndVehicleModelIgnoreCase(description.trim(), vm)
+        WorkItem item = repo.findFirstByDescriptionIgnoreCaseAndVehicleModelIgnoreCaseAndBusinessId(description.trim(), vm, businessId)
                 .orElse(new WorkItem());
         item.setDescription(description.trim());
         item.setVehicleModel(vm);
         item.setUnitPrice(unitPrice != null ? unitPrice : BigDecimal.ZERO);
+        if (businessId != null) {
+            businessRepository.findById(businessId).ifPresent(item::setBusiness);
+        }
         repo.save(item);
     }
 
@@ -81,6 +93,7 @@ public class WorkItemService {
         dto.setDescription(w.getDescription());
         dto.setVehicleModel(w.getVehicleModel());
         dto.setUnitPrice(w.getUnitPrice());
+        dto.setBusinessId(w.getBusiness() != null ? w.getBusiness().getId() : null);
         return dto;
     }
 }

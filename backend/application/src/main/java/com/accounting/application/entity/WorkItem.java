@@ -27,6 +27,10 @@ public class WorkItem {
     @Column(name = "unit_price", precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "business_id")
+    private Business business;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

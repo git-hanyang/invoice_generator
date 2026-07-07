@@ -10,4 +10,5 @@ public class WorkItemDto {
     private String description;
     private String vehicleModel;
     private BigDecimal unitPrice;
+    private Long businessId;
 }

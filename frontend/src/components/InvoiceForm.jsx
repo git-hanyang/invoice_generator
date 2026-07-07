@@ -188,6 +188,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
     try {
       const payload = {
         invoiceNumber: invoiceNumber.trim(),
+        businessId: business?.id,
         carPlate: carPlate.trim(),
         vehicleModel: vehicleModel.trim(),
         phone: phone.trim(),
@@ -334,6 +335,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                   <WorkItemAutocomplete
                     value={item.description}
                     vehicleModel={vehicleModel}
+                    business={business}
                     onChange={val => updateItem(idx, 'description', val)}
                     onSelect={wi => handleSelectWorkItem(idx, wi)}
                   />

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import api from '../api/axios'
 
-export default function WorkItemAutocomplete({ value, vehicleModel, onChange, onSelect }) {
+export default function WorkItemAutocomplete({ value, vehicleModel, business, onChange, onSelect }) {
   const [suggestions, setSuggestions] = useState([])
   const [open, setOpen] = useState(false)
   const timerRef = useRef(null)
@@ -22,7 +22,7 @@ export default function WorkItemAutocomplete({ value, vehicleModel, onChange, on
     if (v.length < 1) { setSuggestions([]); setOpen(false); return }
     timerRef.current = setTimeout(async () => {
       try {
-        const params = { query: v }
+        const params = { query: v, businessId: business?.id }
         if (vehicleModel && vehicleModel.trim()) params.vehicleModel = vehicleModel.trim()
         const { data } = await api.get('/work-items/search', { params })
         setSuggestions(data)

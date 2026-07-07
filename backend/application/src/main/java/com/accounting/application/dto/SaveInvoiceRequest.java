@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class SaveInvoiceRequest {
     private String invoiceNumber;
+    private Long businessId;
     private Long customerId;
     private String carPlate;
     private String vehicleModel;

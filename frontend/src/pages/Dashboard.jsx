@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import InvoiceForm from '../components/InvoiceForm'
 import InvoiceHistory from '../components/InvoiceHistory'
+import Pricing from './Pricing'
 
-const TABS = ['New Tax Invoice', 'Tax Invoice History']
+const TABS = ['New Tax Invoice', 'Tax Invoice History', 'Pricing']
 
 export default function Dashboard() {
   const [tab, setTab] = useState(0)
@@ -95,6 +96,7 @@ export default function Dashboard() {
       <main className="flex-1 p-6">
         {tab === 0 && <InvoiceForm business={activeBusiness} />}
         {tab === 1 && <InvoiceHistory business={activeBusiness} />}
+        {tab === 2 && <Pricing business={activeBusiness} />}
       </main>
     </div>
   )

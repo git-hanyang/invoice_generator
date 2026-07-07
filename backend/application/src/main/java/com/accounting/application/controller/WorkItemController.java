@@ -16,20 +16,23 @@ public class WorkItemController {
     private final WorkItemService workItemService;
 
     @GetMapping
-    public ResponseEntity<List<WorkItemDto>> getAll() {
-        return ResponseEntity.ok(workItemService.getAll());
+    public ResponseEntity<List<WorkItemDto>> getAll(@RequestParam(required = false) Long businessId) {
+        return ResponseEntity.ok(workItemService.getAll(businessId));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<WorkItemDto>> search(
             @RequestParam String query,
-            @RequestParam(required = false) String vehicleModel) {
-        return ResponseEntity.ok(workItemService.search(query, vehicleModel));
+            @RequestParam(required = false) String vehicleModel,
+            @RequestParam(required = false) Long businessId) {
+        return ResponseEntity.ok(workItemService.search(query, vehicleModel, businessId));
     }
 
     @GetMapping("/search/vehicle-model")
-    public ResponseEntity<List<WorkItemDto>> searchByVehicleModel(@RequestParam String query) {
-        return ResponseEntity.ok(workItemService.searchByVehicleModel(query));
+    public ResponseEntity<List<WorkItemDto>> searchByVehicleModel(
+            @RequestParam String query,
+            @RequestParam(required = false) Long businessId) {
+        return ResponseEntity.ok(workItemService.searchByVehicleModel(query, businessId));
     }
 
     @PostMapping

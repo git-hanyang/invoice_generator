@@ -45,12 +45,18 @@ CREATE TABLE IF NOT EXISTS work_items (
     description TEXT NOT NULL,
     vehicle_model VARCHAR(200) NOT NULL DEFAULT '',
     unit_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    business_id BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE INDEX uq_vehicle_model_description (vehicle_model, description(255)),
     FULLTEXT INDEX ft_description (description),
-    FULLTEXT INDEX ft_vehicle_model (vehicle_model)
+    FULLTEXT INDEX ft_vehicle_model (vehicle_model),
+    FOREIGN KEY (business_id) REFERENCES businesses(id)
 );
+
+-- For DBs created before business_id existed on work_items:
+ALTER TABLE work_items ADD COLUMN IF NOT EXISTS business_id BIGINT AFTER unit_price;
+ALTER TABLE work_items ADD INDEX IF NOT EXISTS idx_work_items_business (business_id);
 
 CREATE TABLE IF NOT EXISTS invoices (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

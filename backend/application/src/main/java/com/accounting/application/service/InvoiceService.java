@@ -50,7 +50,7 @@ public class InvoiceService {
                         .sortOrder(i)
                         .build();
                 invoice.getItems().add(item);
-                workItemService.upsertByDescriptionAndVehicleModel(d.getDescription(), req.getVehicleModel(), d.getUnitPrice());
+                workItemService.upsertByDescriptionAndVehicleModel(d.getDescription(), req.getVehicleModel(), d.getUnitPrice(), req.getBusinessId());
             }
         }
 
