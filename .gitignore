@@ -27,3 +27,7 @@ Thumbs.db
 
 # ── Docker ───────────────────────────────────────────
 .env
+
+# ── Claude Code / graphify ────────────────────────────
+.claude/
+graphify-out/
