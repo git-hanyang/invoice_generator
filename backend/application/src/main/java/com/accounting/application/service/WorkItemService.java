@@ -21,15 +21,17 @@ public class WorkItemService {
     private final WorkItemRepository repo;
     private final BusinessRepository businessRepository;
 
-    public List<WorkItemDto> search(String query, String vehicleModel, Long businessId) {
+    public List<WorkItemDto> search(String query, String vehicleModel, Long businessId, boolean allVehicleModels) {
         if (query == null || query.isBlank() || businessId == null) return List.of();
         String ftQuery = toFulltextQuery(query);
         if (vehicleModel != null && !vehicleModel.isBlank()) {
             return repo.searchByDescriptionAndVehicleModel(ftQuery, CustomerService.toTitleCase(vehicleModel), businessId)
                     .stream().map(this::toDto).collect(Collectors.toList());
         }
-        return repo.searchByDescription(ftQuery, businessId)
-                .stream().map(this::toDto).collect(Collectors.toList());
+        List<WorkItem> results = allVehicleModels
+                ? repo.searchAllByDescription(ftQuery, businessId)
+                : repo.searchByDescription(ftQuery, businessId);
+        return results.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public List<WorkItemDto> searchByVehicleModel(String query, Long businessId) {
