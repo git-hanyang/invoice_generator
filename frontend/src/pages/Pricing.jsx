@@ -68,7 +68,7 @@ function SearchBox({ label, placeholder, onSearch }) {
 
 export default function Pricing({ business }) {
   async function searchByDescription(query) {
-    const { data } = await api.get('/work-items/search', { params: { query, businessId: business?.id } })
+    const { data } = await api.get('/work-items/search', { params: { query, businessId: business?.id, allVehicleModels: true } })
     return data
   }
 

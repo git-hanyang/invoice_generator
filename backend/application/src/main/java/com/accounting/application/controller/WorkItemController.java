@@ -24,8 +24,9 @@ public class WorkItemController {
     public ResponseEntity<List<WorkItemDto>> search(
             @RequestParam String query,
             @RequestParam(required = false) String vehicleModel,
-            @RequestParam(required = false) Long businessId) {
-        return ResponseEntity.ok(workItemService.search(query, vehicleModel, businessId));
+            @RequestParam(required = false) Long businessId,
+            @RequestParam(required = false, defaultValue = "false") boolean allVehicleModels) {
+        return ResponseEntity.ok(workItemService.search(query, vehicleModel, businessId, allVehicleModels));
     }
 
     @GetMapping("/search/vehicle-model")
