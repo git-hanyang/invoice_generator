@@ -1,12 +1,16 @@
 package com.accounting.application.controller;
 
+import com.accounting.application.dto.RenameWorkItemDescriptionRequest;
+import com.accounting.application.dto.WorkItemDescriptionDto;
 import com.accounting.application.dto.WorkItemDto;
 import com.accounting.application.service.WorkItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/work-items")
@@ -45,5 +49,22 @@ public class WorkItemController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         workItemService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/descriptions")
+    public ResponseEntity<List<WorkItemDescriptionDto>> getDistinctDescriptions(@RequestParam Long businessId) {
+        return ResponseEntity.ok(workItemService.getDistinctDescriptions(businessId));
+    }
+
+    @PutMapping("/description")
+    public ResponseEntity<?> renameDescription(@RequestBody RenameWorkItemDescriptionRequest req) {
+        try {
+            int updated = workItemService.renameDescription(req.getBusinessId(), req.getOldDescription(), req.getNewDescription());
+            return ResponseEntity.ok(Map.of("updated", updated));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).body(Map.of("message", "That description already exists for one of the affected vehicle models."));
+        }
     }
 }

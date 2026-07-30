@@ -2,6 +2,7 @@ package com.accounting.application.repository;
 
 import com.accounting.application.entity.WorkItem;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -24,4 +25,11 @@ public interface WorkItemRepository extends JpaRepository<WorkItem, Long> {
     Optional<WorkItem> findFirstByDescriptionIgnoreCaseAndVehicleModelIgnoreCaseAndBusinessId(String description, String vehicleModel, Long businessId);
 
     List<WorkItem> findAllByBusinessId(Long businessId);
+
+    @Query(value = "SELECT description, COUNT(*) AS cnt FROM work_items WHERE business_id = :businessId GROUP BY description ORDER BY description ASC", nativeQuery = true)
+    List<Object[]> findDistinctDescriptionCounts(Long businessId);
+
+    @Modifying
+    @Query(value = "UPDATE work_items SET description = :newDescription WHERE business_id = :businessId AND description = :oldDescription", nativeQuery = true)
+    int renameDescription(Long businessId, String oldDescription, String newDescription);
 }
