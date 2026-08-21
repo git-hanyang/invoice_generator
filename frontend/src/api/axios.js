@@ -12,6 +12,15 @@ api.interceptors.response.use(
   r => r,
   err => {
     if (err.response?.status === 401) {
+      const token = localStorage.getItem('token')
+      if (token) {
+        fetch('/api/actions/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ action: 'Redirected to /login (session expired)', path: window.location.pathname }),
+          keepalive: true,
+        }).catch(() => {})
+      }
       localStorage.removeItem('token')
       window.location.href = '/login'
     }
