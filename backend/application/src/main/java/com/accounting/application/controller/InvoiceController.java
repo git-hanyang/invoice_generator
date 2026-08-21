@@ -1,12 +1,15 @@
 package com.accounting.application.controller;
 
 import com.accounting.application.dto.InvoiceDto;
+import com.accounting.application.dto.SalesSummaryDto;
 import com.accounting.application.dto.SaveInvoiceRequest;
 import com.accounting.application.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +44,13 @@ public class InvoiceController {
     @GetMapping("/exists")
     public ResponseEntity<Map<String, Boolean>> exists(@RequestParam String invoiceNumber) {
         return ResponseEntity.ok(Map.of("exists", invoiceService.invoiceNumberExists(invoiceNumber)));
+    }
+
+    @GetMapping("/sales-summary")
+    public ResponseEntity<SalesSummaryDto> salesSummary(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return ResponseEntity.ok(invoiceService.getSalesSummary(from, to));
     }
 
     @GetMapping("/next-number")

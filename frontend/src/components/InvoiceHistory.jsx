@@ -4,7 +4,7 @@ import InvoiceForm from './InvoiceForm'
 import InvoiceTemplate from './InvoiceTemplate'
 import { generateInvoicePdf } from '../utils/pdfGenerator'
 
-function toTemplateFormat(data) {
+export function toTemplateFormat(data) {
   return {
     invoiceNumber: data.invoiceNumber,
     invoiceDate: data.invoiceDate,
@@ -33,7 +33,7 @@ function sortByInvoiceNumberDesc(invoices) {
   })
 }
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 10
 
 export default function InvoiceHistory({ business }) {
   const [query, setQuery] = useState('')

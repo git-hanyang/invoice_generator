@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,6 +91,17 @@ public class InvoiceService {
                 ? invoiceRepo.findAllIncludeDeletedOrderByDateDesc()
                 : invoiceRepo.searchAllIncludeDeletedByCarPlateOrPhone(query);
         return results.stream().map(i -> toDto(i)).collect(Collectors.toList());
+    }
+
+    public SalesSummaryDto getSalesSummary(LocalDate from, LocalDate to) {
+        List<Invoice> invoices = invoiceRepo.findActiveBetween(from, to);
+        List<SalesSummaryItemDto> items = invoices.stream()
+                .map(i -> new SalesSummaryItemDto(i.getId(), i.getInvoiceNumber(), i.getInvoiceDate(), i.getTotalAmount()))
+                .collect(Collectors.toList());
+        BigDecimal total = items.stream()
+                .map(SalesSummaryItemDto::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new SalesSummaryDto(total, items.size(), items);
     }
 
     public InvoiceDto getById(Long id) {
