@@ -33,9 +33,12 @@ function sortByInvoiceNumberDesc(invoices) {
   })
 }
 
+const PAGE_SIZE = 5
+
 export default function InvoiceHistory({ business }) {
   const [query, setQuery] = useState('')
   const [invoices, setInvoices] = useState([])
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState(null)
   const [selectedFullData, setSelectedFullData] = useState(null)
@@ -43,6 +46,7 @@ export default function InvoiceHistory({ business }) {
   const [editData, setEditData] = useState(null)
   const [generating, setGenerating] = useState(false)
   const previewRef = useRef(null)
+  const pendingPrintRef = useRef(false)
 
   async function handleDownload() {
     if (!previewRef.current) return
@@ -83,14 +87,25 @@ export default function InvoiceHistory({ business }) {
     try {
       const { data } = await api.get('/invoices/search', { params: q ? { query: q } : {} })
       setInvoices(sortByInvoiceNumberDesc(data))
+      setPage(0)
     } catch {
       setInvoices([])
+      setPage(0)
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => { search('') }, [search])
+
+  useEffect(() => {
+    if (!pendingPrintRef.current || !selectedFullData) return
+    pendingPrintRef.current = false
+    handlePrint()
+  }, [selectedFullData])
+
+  const totalPages = Math.max(1, Math.ceil(invoices.length / PAGE_SIZE))
+  const pagedInvoices = invoices.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
 
   function handleSearch(e) {
     e.preventDefault()
@@ -122,6 +137,11 @@ export default function InvoiceHistory({ business }) {
     }
   }
 
+  async function handleRowPrint(inv) {
+    pendingPrintRef.current = true
+    await handleSelect(inv)
+  }
+
   async function handleDelete(inv) {
     if (!window.confirm(`Delete invoice ${inv.invoiceNumber}? This cannot be undone.`)) return
     try {
@@ -142,12 +162,14 @@ export default function InvoiceHistory({ business }) {
   if (editing && editData) {
     return (
       <div>
-        <button
-          onClick={() => { setEditing(false); setEditData(null) }}
-          className="mb-4 text-sm text-blue-600 hover:underline"
-        >
-          ← Back to History
-        </button>
+        <div className="text-center mb-4">
+          <button
+            onClick={() => { setEditing(false); setEditData(null) }}
+            className="text-lg font-bold text-blue-600 hover:underline"
+          >
+            ← Back to History
+          </button>
+        </div>
         <InvoiceForm initialData={editData} onSaved={handleSaved} business={business} />
       </div>
     )
@@ -199,7 +221,7 @@ export default function InvoiceHistory({ business }) {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {invoices.map(inv => {
+              {pagedInvoices.map(inv => {
                 const isDeleted = !!inv.deletedAt
                 return (
                   <tr
@@ -233,6 +255,13 @@ export default function InvoiceHistory({ business }) {
                             Edit
                           </button>
                           <button
+                            onClick={() => handleRowPrint(inv)}
+                            disabled={generating}
+                            className="text-xs px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition disabled:opacity-50"
+                          >
+                            Print
+                          </button>
+                          <button
                             onClick={() => handleDelete(inv)}
                             className="text-xs px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition"
                           >
@@ -246,6 +275,25 @@ export default function InvoiceHistory({ business }) {
               })}
             </tbody>
           </table>
+        )}
+        {!loading && invoices.length > PAGE_SIZE && (
+          <div className="flex items-center justify-between px-4 py-3 border-t text-sm text-gray-600">
+            <button
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded-lg disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span>Page {page + 1} of {totalPages}</span>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded-lg disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         )}
       </div>
 

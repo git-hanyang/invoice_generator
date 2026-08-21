@@ -4,8 +4,9 @@ import api from '../api/axios'
 import InvoiceForm from '../components/InvoiceForm'
 import InvoiceHistory from '../components/InvoiceHistory'
 import Pricing from './Pricing'
+import WorkItemDescriptions from './WorkItemDescriptions'
 
-const TABS = ['New Tax Invoice', 'Tax Invoice History', 'Pricing']
+const TABS = ['New Tax Invoice', 'Tax Invoice History', 'Pricing', 'Descriptions']
 
 export default function Dashboard() {
   const [tab, setTab] = useState(0)
@@ -97,6 +98,7 @@ export default function Dashboard() {
         {tab === 0 && <InvoiceForm business={activeBusiness} />}
         {tab === 1 && <InvoiceHistory business={activeBusiness} />}
         {tab === 2 && <Pricing business={activeBusiness} />}
+        {tab === 3 && <WorkItemDescriptions business={activeBusiness} />}
       </main>
     </div>
   )

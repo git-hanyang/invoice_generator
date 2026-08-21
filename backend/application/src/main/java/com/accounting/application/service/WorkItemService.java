@@ -1,5 +1,6 @@
 package com.accounting.application.service;
 
+import com.accounting.application.dto.WorkItemDescriptionDto;
 import com.accounting.application.dto.WorkItemDto;
 import com.accounting.application.entity.Business;
 import com.accounting.application.entity.WorkItem;
@@ -87,6 +88,22 @@ public class WorkItemService {
 
     public void delete(Long id) {
         repo.deleteById(id);
+    }
+
+    public List<WorkItemDescriptionDto> getDistinctDescriptions(Long businessId) {
+        if (businessId == null) return List.of();
+        return repo.findDistinctDescriptionCounts(businessId).stream()
+                .map(row -> new WorkItemDescriptionDto((String) row[0], ((Number) row[1]).longValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public int renameDescription(Long businessId, String oldDescription, String newDescription) {
+        if (businessId == null || oldDescription == null || oldDescription.isBlank()
+                || newDescription == null || newDescription.isBlank()) {
+            throw new IllegalArgumentException("businessId, oldDescription and newDescription are required.");
+        }
+        return repo.renameDescription(businessId, oldDescription.trim(), newDescription.trim());
     }
 
     private WorkItemDto toDto(WorkItem w) {
