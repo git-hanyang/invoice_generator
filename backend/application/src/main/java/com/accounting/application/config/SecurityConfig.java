@@ -28,7 +28,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configure(http))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register", "/api/actions/log").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(e -> e

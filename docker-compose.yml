@@ -30,6 +30,8 @@ services:
       TZ: Asia/Kuala_Lumpur
     ports:
       - "8090:8090"
+    volumes:
+      - ./logs:/app/logs
     depends_on:
       mariadb:
         condition: service_healthy

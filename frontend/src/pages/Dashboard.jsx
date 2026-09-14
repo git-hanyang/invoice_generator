@@ -5,8 +5,9 @@ import InvoiceForm from '../components/InvoiceForm'
 import InvoiceHistory from '../components/InvoiceHistory'
 import Pricing from './Pricing'
 import WorkItemDescriptions from './WorkItemDescriptions'
+import SalesReport from '../components/SalesReport'
 
-const TABS = ['New Tax Invoice', 'Tax Invoice History', 'Pricing', 'Descriptions']
+const TABS = ['New Tax Invoice', 'Tax Invoice History', 'Pricing', 'Descriptions', 'Sales Report']
 
 export default function Dashboard() {
   const [tab, setTab] = useState(0)
@@ -99,6 +100,7 @@ export default function Dashboard() {
         {tab === 1 && <InvoiceHistory business={activeBusiness} />}
         {tab === 2 && <Pricing business={activeBusiness} />}
         {tab === 3 && <WorkItemDescriptions business={activeBusiness} />}
+        {tab === 4 && <SalesReport business={activeBusiness} />}
       </main>
     </div>
   )

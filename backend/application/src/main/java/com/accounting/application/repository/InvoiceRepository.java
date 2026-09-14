@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<String> findAllActiveInvoiceNumbers();
 
     long countByCustomer_Id(Long customerId);
+
+    @Query("SELECT i FROM Invoice i WHERE i.deletedAt IS NULL AND i.invoiceDate BETWEEN :from AND :to ORDER BY i.invoiceDate ASC, i.invoiceNumber ASC")
+    List<Invoice> findActiveBetween(@Param("from") LocalDate from, @Param("to") LocalDate to);
 }

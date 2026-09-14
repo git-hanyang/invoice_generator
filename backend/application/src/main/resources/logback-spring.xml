@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="USER_ACTION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/user-actions.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/user-actions-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="USER_ACTION" level="INFO" additivity="false">
+        <appender-ref ref="USER_ACTION_FILE"/>
+    </logger>
+</configuration>
