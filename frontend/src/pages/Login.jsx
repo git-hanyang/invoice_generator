@@ -24,7 +24,7 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      const { data } = await api.post('/auth/login', { username, password })
+      const { data } = await api.post('/auth/login', { username: username.trim(), password: password.trim() })
       localStorage.setItem('token', data.token)
       localStorage.setItem('username', data.username)
       if (data.business) {
@@ -42,12 +42,13 @@ export default function Login() {
 
   async function handleRegister(e) {
     e.preventDefault()
-    if (password !== confirm) { setError('Passwords do not match'); return }
-    if (password.length < 4) { setError('Password must be at least 4 characters'); return }
+    const trimmedPassword = password.trim()
+    if (trimmedPassword !== confirm.trim()) { setError('Passwords do not match'); return }
+    if (trimmedPassword.length < 4) { setError('Password must be at least 4 characters'); return }
     setError('')
     setLoading(true)
     try {
-      const { data } = await api.post('/auth/register', { username, password })
+      const { data } = await api.post('/auth/register', { username: username.trim(), password: trimmedPassword })
       localStorage.setItem('token', data.token)
       localStorage.setItem('username', data.username)
       navigate('/business-setup')

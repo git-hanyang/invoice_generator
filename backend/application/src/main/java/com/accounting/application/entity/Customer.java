@@ -22,4 +22,7 @@ public class Customer {
 
     @Column(name = "vehicle_model", length = 200, nullable = false)
     private String vehicleModel;
+
+    @Column(name = "company_name", length = 200)
+    private String companyName;
 }

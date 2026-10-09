@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import api from '../api/axios'
 
-export default function CustomerAutocomplete({ value, phone, onChange, onPhoneChange, onVehicleModelChange }) {
+export default function CustomerAutocomplete({ value, phone, onChange, onPhoneChange, onVehicleModelChange, onCompanyNameChange }) {
   const [suggestions, setSuggestions] = useState([])
   const [open, setOpen] = useState(false)
   const timerRef = useRef(null)
@@ -33,6 +33,7 @@ export default function CustomerAutocomplete({ value, phone, onChange, onPhoneCh
     onChange(c.carPlate, c.id)
     onPhoneChange(c.phone || '')
     if (onVehicleModelChange) onVehicleModelChange(c.vehicleModel || '')
+    if (onCompanyNameChange) onCompanyNameChange(c.companyName || '')
     setOpen(false)
     setSuggestions([])
   }
@@ -60,6 +61,9 @@ export default function CustomerAutocomplete({ value, phone, onChange, onPhoneCh
               </div>
               {c.vehicleModel && (
                 <div className="text-xs text-gray-400 mt-0.5">{c.vehicleModel}</div>
+              )}
+              {c.companyName && (
+                <div className="text-xs text-gray-400 mt-0.5">{c.companyName}</div>
               )}
             </li>
           ))}

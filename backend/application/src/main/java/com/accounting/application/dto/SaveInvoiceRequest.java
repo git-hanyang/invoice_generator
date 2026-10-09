@@ -13,6 +13,7 @@ public class SaveInvoiceRequest {
     private Long customerId;
     private String carPlate;
     private String vehicleModel;
+    private String companyName;
     private String phone;
     private LocalDate invoiceDate;
     private BigDecimal totalAmount;

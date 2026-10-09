@@ -29,6 +29,7 @@ export default function InvoiceTemplate({ invoice, business }) {
     invoiceDate = '',
     carPlate = '',
     vehicleModel = '',
+    companyName = '',
     phone = '',
     remark = '',
     items = [],
@@ -114,6 +115,12 @@ export default function InvoiceTemplate({ invoice, business }) {
             <div style={{ marginBottom: '3px' }}>
               <span style={{ fontWeight: '700' }}>Vehicle Model:&nbsp;</span>
               <span>{vehicleModel}</span>
+            </div>
+          )}
+          {companyName && (
+            <div style={{ marginBottom: '3px' }}>
+              <span style={{ fontWeight: '700' }}>Company:&nbsp;</span>
+              <span>{companyName}</span>
             </div>
           )}
           <div>

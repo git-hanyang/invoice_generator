@@ -24,7 +24,7 @@ public class InvoiceService {
 
     @Transactional
     public InvoiceDto save(SaveInvoiceRequest req) {
-        CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone(), req.getVehicleModel());
+        CustomerDto customerDto = customerService.findOrCreate(req.getCarPlate(), req.getPhone(), req.getVehicleModel(), req.getCompanyName());
         Customer customer = customerRepo.findById(customerDto.getId()).orElseThrow();
         Long oldCustomerId = (req.getCustomerId() != null && !req.getCustomerId().equals(customer.getId()))
                 ? req.getCustomerId() : null;
@@ -37,6 +37,7 @@ public class InvoiceService {
         invoice.setInvoiceDate(req.getInvoiceDate());
         invoice.setTotalAmount(req.getTotalAmount());
         invoice.setVehicleModel(req.getVehicleModel());
+        invoice.setCompanyName(req.getCompanyName());
         invoice.setRemark(req.getRemark());
 
         invoice.getItems().clear();
@@ -134,6 +135,7 @@ public class InvoiceService {
         dto.setInvoiceDate(inv.getInvoiceDate());
         dto.setTotalAmount(inv.getTotalAmount());
         dto.setVehicleModel(inv.getVehicleModel());
+        dto.setCompanyName(inv.getCompanyName());
         dto.setRemark(inv.getRemark());
 
         CustomerDto cd = new CustomerDto();

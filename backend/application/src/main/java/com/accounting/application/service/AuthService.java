@@ -26,26 +26,30 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(LoginRequest request) {
+        String username = trimOrEmpty(request.getUsername());
+        String password = trimOrEmpty(request.getPassword());
         authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(username, password)
         );
-        String token = jwtUtil.generate(request.getUsername());
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        return new LoginResponse(token, request.getUsername(), toBusinessDto(user.getBusiness()));
+        String token = jwtUtil.generate(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
+        return new LoginResponse(token, username, toBusinessDto(user.getBusiness()));
     }
 
     @Transactional
     public LoginResponse register(LoginRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        String username = trimOrEmpty(request.getUsername());
+        String password = trimOrEmpty(request.getPassword());
+        if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Username already taken");
         }
         User user = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .username(username)
+                .password(passwordEncoder.encode(password))
                 .build();
         userRepository.save(user);
-        String token = jwtUtil.generate(request.getUsername());
-        return new LoginResponse(token, request.getUsername(), null);
+        String token = jwtUtil.generate(username);
+        return new LoginResponse(token, username, null);
     }
 
     @Transactional
@@ -56,6 +60,10 @@ public class AuthService {
         user.setBusiness(business);
         userRepository.save(user);
         return toBusinessDto(business);
+    }
+
+    private static String trimOrEmpty(String s) {
+        return s == null ? "" : s.trim();
     }
 
     public BusinessDto toBusinessDto(Business b) {

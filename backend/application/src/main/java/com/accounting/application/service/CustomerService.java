@@ -20,19 +20,20 @@ public class CustomerService {
                 .stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public CustomerDto findOrCreate(String carPlate, String phone, String vehicleModel) {
+    public CustomerDto findOrCreate(String carPlate, String phone, String vehicleModel, String companyName) {
         String vm = toTitleCase(vehicleModel);
         String ph = phone != null ? phone.trim() : "";
-        return repo.findByCarPlateIgnoreCaseAndPhoneAndVehicleModel(carPlate, ph, vm)
-                .map(this::toDto)
-                .orElseGet(() -> {
-                    Customer c = Customer.builder()
-                            .carPlate(carPlate.toUpperCase())
-                            .phone(ph)
-                            .vehicleModel(vm)
-                            .build();
-                    return toDto(repo.save(c));
-                });
+        String cn = companyName != null ? companyName.trim() : "";
+        Customer c = repo.findByCarPlateIgnoreCaseAndPhoneAndVehicleModel(carPlate, ph, vm)
+                .orElseGet(() -> Customer.builder()
+                        .carPlate(carPlate.toUpperCase())
+                        .phone(ph)
+                        .vehicleModel(vm)
+                        .build());
+        if (!cn.isEmpty() && !cn.equals(c.getCompanyName())) {
+            c.setCompanyName(cn);
+        }
+        return toDto(repo.save(c));
     }
 
     static String toTitleCase(String s) {
@@ -62,6 +63,7 @@ public class CustomerService {
         dto.setCarPlate(c.getCarPlate());
         dto.setPhone(c.getPhone());
         dto.setVehicleModel(c.getVehicleModel());
+        dto.setCompanyName(c.getCompanyName());
         return dto;
     }
 }

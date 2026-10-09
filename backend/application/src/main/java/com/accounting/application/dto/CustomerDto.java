@@ -8,4 +8,5 @@ public class CustomerDto {
     private String carPlate;
     private String phone;
     private String vehicleModel;
+    private String companyName;
 }

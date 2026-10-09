@@ -33,6 +33,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   const [carPlate, setCarPlate] = useState(initialData?.customer?.carPlate || '')
   const [customerId, setCustomerId] = useState(initialData?.customer?.id || null)
   const [vehicleModel, setVehicleModel] = useState(initialData?.vehicleModel || '')
+  const [companyName, setCompanyName] = useState(initialData?.companyName || '')
   const [phone, setPhone] = useState(initialData?.customer?.phone || '')
   const [remark, setRemark] = useState(initialData?.remark || '')
   const [items, setItems] = useState(
@@ -57,6 +58,28 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
   const [generating, setGenerating] = useState(false)
   const [msg, setMsg] = useState('')
   const [savedOk, setSavedOk] = useState(!!initialData)
+  const [dirty, setDirty] = useState(false)
+
+  function buildSnapshot() {
+    return JSON.stringify({
+      invoiceNumber: invoiceNumber.trim(),
+      invoiceDate,
+      carPlate: carPlate.trim(),
+      vehicleModel: vehicleModel.trim(),
+      companyName: companyName.trim(),
+      phone: phone.trim(),
+      remark: remark.trim(),
+      items,
+      payments,
+    })
+  }
+
+  const savedSnapshotRef = useRef(initialData ? buildSnapshot() : null)
+
+  useEffect(() => {
+    if (!savedOk || savedSnapshotRef.current == null) return
+    setDirty(buildSnapshot() !== savedSnapshotRef.current)
+  }, [invoiceNumber, invoiceDate, carPlate, vehicleModel, companyName, phone, remark, items, payments])
 
   const total = items.reduce((s, i) => s + (parseFloat(i.amount) || 0), 0)
   const paidTotal = payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0)
@@ -123,6 +146,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       invoiceDate,
       carPlate,
       vehicleModel,
+      companyName,
       phone,
       remark,
       items: items.map(i => ({
@@ -191,6 +215,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
         businessId: business?.id,
         carPlate: carPlate.trim(),
         vehicleModel: vehicleModel.trim(),
+        companyName: companyName.trim(),
         phone: phone.trim(),
         customerId,
         invoiceDate,
@@ -211,6 +236,8 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
       await api.post('/invoices', payload)
       setMsg('Invoice saved successfully.')
       setSavedOk(true)
+      savedSnapshotRef.current = buildSnapshot()
+      setDirty(false)
       if (onSaved) onSaved()
     } catch (err) {
       setMsg(err.response?.data?.message || 'Save failed.')
@@ -233,11 +260,13 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               setCarPlate('')
               setCustomerId(null)
               setVehicleModel('')
+              setCompanyName('')
               setPhone('')
               setRemark('')
               setItems([emptyItem()])
               setPayments([])
               setSavedOk(false)
+              setDirty(false)
               setMsg('')
             }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-600 border border-blue-200 hover:bg-blue-50 transition"
@@ -295,6 +324,7 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                 onChange={handleCarPlateChange}
                 onPhoneChange={setPhone}
                 onVehicleModelChange={setVehicleModel}
+                onCompanyNameChange={setCompanyName}
               />
             </div>
             <div>
@@ -313,6 +343,15 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
                 placeholder="e.g. Toyota Vios 2020"
                 value={vehicleModel}
                 onChange={e => setVehicleModel(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Company Name</label>
+              <input
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="For customer expense claims (optional)"
+                value={companyName}
+                onChange={e => setCompanyName(e.target.value)}
               />
             </div>
           </div>
@@ -439,8 +478,17 @@ export default function InvoiceForm({ initialData, onSaved, business }) {
               disabled={generating || saving || (!initialData && savedOk)}
               className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${generating || saving || (!initialData && savedOk) ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
             >
-              {saving ? 'Saving...' : 'Save Invoice'}
+              {saving && !savedOk ? 'Saving...' : 'Save Invoice'}
             </button>
+            {!initialData && savedOk && (
+              <button
+                onClick={handleSave}
+                disabled={generating || saving || !dirty}
+                className={`px-5 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 ${generating || saving || !dirty ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+              >
+                {saving ? 'Saving...' : 'Save Edit'}
+              </button>
+            )}
             {!initialData && (
               <button
                 onClick={handlePrint}

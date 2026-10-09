@@ -9,6 +9,8 @@ export function toTemplateFormat(data) {
     invoiceNumber: data.invoiceNumber,
     invoiceDate: data.invoiceDate,
     carPlate: data.customer?.carPlate || '',
+    vehicleModel: data.vehicleModel || '',
+    companyName: data.companyName || '',
     phone: data.customer?.phone || '',
     remark: data.remark || '',
     items: (data.items || []).map(i => ({
